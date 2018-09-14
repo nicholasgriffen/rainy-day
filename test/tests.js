@@ -23,21 +23,13 @@ describe('github client', () => {
       request = github.client.request()
     })
 
-    it('returns a promise', () => {
+    it('returns a promise when called with default parameters', () => {
       expect(request).to.be.a('promise')
     })
 
-    it('that resolves to a value with a .json method', () => {
+    it('that resolves to a array', () => {
       return request
-        .then(res => expect(res.json).to.not.throw())
-        .catch(e => expect(e).to.equal(false))
+        .then(res => expect(res).to.be.an('array'))
     })
   })
 })
-
-// before(() => {
-//   window.document.dispatchEvent(new Event("DOMContentLoaded", {
-//     bubbles: true,
-//     cancelable: true,
-//   }))
-// })
