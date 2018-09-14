@@ -20,16 +20,18 @@ describe('github client', () => {
   describe('#github.client.request', () => {
     let request
     before(() => {
-      request = github.client.request()
+      request = github.client.request(`users/nicholasgriffen/repos`)
     })
 
-    it('returns a promise when called with default parameters', () => {
-      expect(request).to.be.a('promise')
+    it('returns a function', () => {
+      expect(request).to.be.a('function')
     })
 
-    it('that resolves to a array', () => {
-      return request
-        .then(res => expect(res).to.be.an('array'))
+    it('that returns a promise', () => {
+      expect(request()).to.be.a('promise')
     })
+
+    it('that resolves to an array', () => request()
+      .then(res => expect(res).to.be.an('array')))
   })
 })
