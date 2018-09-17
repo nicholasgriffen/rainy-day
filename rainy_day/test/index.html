@@ -7,12 +7,23 @@
     <link rel="stylesheet" href="mocha.css" />
   </head>
   <body>
+    <header>
+      <span id="branding">Rainy Day</span>
+      <button id="showReadMe">Show Read Me</button>
+    </header>
+    <main>
+      <h1>Try this</h1>
+      <div id="repos"></div>
+      <div id="readMeContainer"></div>
+    </main>
     <div id="mocha"></div>
     <script src="mocha.js"></script>
     <script src="chai.js"></script>
     <script>mocha.setup('bdd');</script>
-    <script src="github.test.js"></script>
     <script src="../lib/github.js"></script>
+    <script src="../pub/main.js"></script>
+    <script src="github.test.js"></script>
+    <script src="main.test.js"></script>
     <script>
       mocha.run();
     </script>

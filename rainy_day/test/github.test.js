@@ -72,6 +72,6 @@ describe('github client', () => {
     })
 
     it('that resolves to a non-empty string', () => readme
-      .then(res => expect(res).not.to.be.empty()))
+      .then(res => expect(res).not.be.empty))
   })
 })

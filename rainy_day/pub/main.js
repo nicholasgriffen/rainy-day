@@ -1,13 +1,40 @@
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
-  //set up request with lib/github
-  const request = github.client.setupRequest(`users/nicholasgriffen/repos`)
-  let todo = document.getElementById("todo")
-  request().then((res) => {
-    debugger
-  })
+  console.log('loaded')
+  save('login', 'nicholasgriffen')
+  save('repo', 'digijan')
+  document.getElementById("showReadMe").addEventListener("click", showReadMe)
 }
 
-// try to get readme
-// if no readme
+
+function loadReadMe(login, repo) {
+  const localReadMe = load(`${repo}-readMe`)
+
+  if (localReadMe) {
+    return Promise.resolve(localReadMe)
+  } else {
+    return github.client.getReadMe(login, repo)
+      .then((text) => {
+        save(`${repo}-readMe`, text)
+        return load(`${repo}-readMe`)
+      })
+  }
+}
+
+function showReadMe() {
+  const readMeContainer = document.getElementById("readMeContainer")
+
+  loadReadMe(load('login'), load('repo'))
+    .then((readMe) => {
+      readMeContainer.innerHTML = readMe
+    })
+}
+
+function save(label, thing) {
+  localStorage.setItem(`${label}`, JSON.stringify(thing))
+}
+
+function load(label) {
+  return JSON.parse(localStorage.getItem(`${label}`))
+}
