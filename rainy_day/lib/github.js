@@ -7,6 +7,8 @@ const github = {
       },
     },
     setupRequest(endpoint = `users/nicholasgriffen`, { api, options } = github.client) {
+      // return a function to delay execution. fetch seemed to execute an extra
+      // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
         .then((res) => {
           if (res.status !== 200) {
@@ -14,6 +16,17 @@ const github = {
           }
           return res.json()
         })
+    },
+    getRepos(username) {
+      const request = github.client.setupRequest(`users/${username}/repos`)
+      return request()
+    },
+
+    getReadMe(username, repo) {
+      // make request to repos/username/repo/readme
+      const request = github.client.setupRequest
+      // then decode response.content with atob()
+      //
     },
   },
 }
