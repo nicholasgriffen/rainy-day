@@ -6,8 +6,8 @@ const github = {
         Accept: `application/vnd.github.v3+json`,
       },
     },
-    request(endpoint = `users/nicholasgriffen`, { api, options } = github.client) {
-      return fetch(`${api}${endpoint}`, options)
+    setupRequest(endpoint = `users/nicholasgriffen`, { api, options } = github.client) {
+      return () => fetch(`${api}${endpoint}`, options)
         .then((res) => {
           if (res.status !== 200) {
             return Promise.reject(new Error(res.status))

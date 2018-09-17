@@ -13,14 +13,14 @@ describe('github client', () => {
     expect(github.client.options).to.be.an('object')
   })
 
-  it('and a request method', () => {
-    expect(github.client.request).to.not.throw()
+  it('and a setupRequest method', () => {
+    expect(github.client.setupRequest).to.not.throw()
   })
 
-  describe('#github.client.request', () => {
+  describe('#github.client.setupRequest', () => {
     let request
     before(() => {
-      request = github.client.request(`users/nicholasgriffen/repos`)
+      request = github.client.setupRequest(`users/nicholasgriffen/repos`)
     })
 
     it('returns a function', () => {
