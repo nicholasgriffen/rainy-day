@@ -1,9 +1,8 @@
 const { expect } = chai
+const defaultLogin = 'nicholasgriffen'
+const defaultRepo = 'digijan'
 
 describe('github client', () => {
-  const username = "nicholasgriffen"
-  const repo = "digijan"
-
   it('is an object', () => {
     expect(github.client).to.be.an('object')
   })
@@ -28,6 +27,10 @@ describe('github client', () => {
     expect(github.client.getReadMe).to.be.a('function')
   })
 
+  it('a validateUser method', () => {
+    expect(github.client.validateUser).to.be.a('function')
+  })
+
   describe('#github.client.setupRequest takes a github api endpoint string', () => {
     let request
     before(() => {
@@ -43,35 +46,62 @@ describe('github client', () => {
     })
   })
 
-  describe('#github.client.getRepos takes a github username string', () => {
-    const testExp = new RegExp(`/repos/${username}`)
+  describe('#github.client.getRepos takes a github login string', () => {
+    const testExp = new RegExp(`/repos/${defaultLogin}`)
     let repos
     before(() => {
-      repos = github.client.getRepos(username)
+      repos = github.client.getRepos(defaultLogin)
     })
 
     it('returns a promise', () => {
       expect(repos).to.be.a('promise')
     })
 
-    it('that resolves to an array containing at least one object tagged with a url matching /repos/username', () => repos
+    it('that resolves to an array containing at least one object tagged with a url matching /repos/login', () => repos
       .then((res) => {
         expect(res).to.be.an('array')
         return expect(testExp.test(res[0].archive_url)).to.equal(true)
       }))
   })
 
-  describe('#github.client.getReadMe takes a github username string and a repo name string', () => {
-    let readme
+  describe('#github.client.getReadMe takes a github login string and a repo name string', () => {
+    let readMe
+    let noReadMe
+
     before(() => {
-      readme = github.client.getReadMe(username, repo)
+      readMe = github.client.getReadMe(defaultLogin, defaultRepo)
+      noReadMe = github.client.getReadMe(defaultLogin, 'rainy-day')
     })
 
     it('returns a promise', () => {
-      expect(readme).to.be.a('promise')
+      expect(readMe).to.be.a('promise')
     })
 
-    it('that resolves to a non-empty string', () => readme
+    it('that resolves to a non-empty string', () => readMe
       .then(res => expect(res).not.be.empty))
+
+    it('throws "Read Me not found" when request fails', () => noReadMe
+      .catch(e => expect(e.message).to.equal("Read Me not found")))
+  })
+
+  describe('#github.client.validateUser takes a github login string', () => {
+    let valid
+    let invalid
+
+    before(() => {
+      valid = github.client.validateUser(defaultLogin)
+      // github username cannot start or end with hyphen per github.com/join
+      invalid = github.client.validateUser('-invalid-')
+    })
+
+    it('returns a promise', () => {
+      expect(valid).to.be.a('promise')
+    })
+
+    it('throws "User not found" when user is not valid', () => invalid
+      .catch(e => expect(e.message).to.equal('User not found')))
+
+    it('resolves to an object containing the login when user is valid', () => valid
+      .then(res => expect(res.login).to.equal(defaultLogin)))
   })
 })
