@@ -10,6 +10,7 @@
   (let [elem (.getElementById js/document (str id))] elem.innerText))
 
 ;; do something like println that stuff
-(println (getText ["editor"]))
-; (fn [editor] (.innerText js/))
-; (println editorText)
+(println (getText "editor"))
+
+;; add event listener to editor and log inner text on click
+(.addEventListener (.getElementById js/document "editor") "click" (fn [e] (println (getText e.target.id))))
