@@ -2,6 +2,8 @@ const { expect } = chai
 
 describe('github client', () => {
   const username = "nicholasgriffen"
+  const repo = "digijan"
+
   it('is an object', () => {
     expect(github.client).to.be.an('object')
   })
@@ -15,15 +17,15 @@ describe('github client', () => {
   })
 
   it('a setupRequest method', () => {
-    expect(github.client.setupRequest).to.not.throw()
+    expect(github.client.setupRequest).to.be.a('function')
   })
 
   it('a getRepos method', () => {
-    expect(github.client.getRepos).to.not.throw()
+    expect(github.client.getRepos).to.be.a('function')
   })
 
   it('a getReadMe method', () => {
-    expect(github.client.getReadMe).to.not.throw()
+    expect(github.client.getReadMe).to.be.a('function')
   })
 
   describe('#github.client.setupRequest takes a github api endpoint string', () => {
@@ -64,8 +66,12 @@ describe('github client', () => {
     before(() => {
       readme = github.client.getReadMe(username, repo)
     })
+
     it('returns a promise', () => {
       expect(readme).to.be.a('promise')
     })
+
+    it('that resolves to a non-empty string', () => readme
+      .then(res => expect(res).not.to.be.empty()))
   })
 })

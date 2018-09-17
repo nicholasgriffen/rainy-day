@@ -24,7 +24,16 @@ const github = {
 
     getReadMe(username, repo) {
       // make request to repos/username/repo/readme
-      const request = github.client.setupRequest
+      const request = github.client.setupRequest(`repos/${username}/${repo}/readme`)
+      return request()
+        .then((res) => {
+          try {
+            return atob(res.content)
+          } catch (e) {
+            return Promise.reject(new Error(e))
+          }
+        })
+        .catch(e => console.log(e))
       // then decode response.content with atob()
       //
     },
