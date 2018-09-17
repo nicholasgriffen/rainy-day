@@ -30,10 +30,6 @@ function load(label) {
   return JSON.parse(localStorage.getItem(`${label}`))
 }
 
-function unload(label) {
-  localStorage.removeItem('label')
-}
-
 function saveDefaults(defaultLogin, defaultRepo) {
   save('login', defaultLogin)
   save('repo', defaultRepo)
