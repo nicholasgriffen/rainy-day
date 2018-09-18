@@ -63,6 +63,7 @@ const github = {
   },
 }
 
+// DOM //
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
@@ -84,11 +85,11 @@ function main() {
     event.preventDefault()
     let login = document.getElementById("login").value
 
-    // if login is valid, save user and find a repo
+    // save login then get repos and save repos
     github.client.validateUser(login)
       .then(() => save('login', login))
       .then(() => github.client.getRepos(load('login')))
-      .then(repos => save('repo', repos[0].name))
+      .then(repos => save('repos', repos))
       .catch(e => window.alert(e.message))
   })
 }

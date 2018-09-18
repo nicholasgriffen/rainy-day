@@ -17,6 +17,7 @@ describe('main', () => {
     localStorage.removeItem('loadtest')
     localStorage.removeItem('login')
     localStorage.removeItem('repo')
+    localStorage.removeItem(`${defaultRepo}-readMe`)
   })
 
   it('saves a default github login and repo', () => {
@@ -118,23 +119,23 @@ describe('github client', () => {
   })
 
   describe('#github.client.validateUser takes a github login string', () => {
-    let valid
-    let invalid
+    let user
+    let noUser
 
     before(() => {
-      valid = github.client.validateUser(defaultLogin)
+      user = github.client.validateUser(defaultLogin)
       // github username cannot start or end with hyphen per github.com/join
-      invalid = github.client.validateUser('-invalid-')
+      noUser = github.client.validateUser('-invalid-')
     })
 
     it('returns a promise', () => {
-      expect(valid).to.be.a('promise')
+      expect(user).to.be.a('promise')
     })
 
-    it('that resolves to an object containing the login when user is valid', () => valid
+    it('that resolves to an object containing the login when user is valid', () => user
       .then(res => expect(res.login).to.equal(defaultLogin)))
 
-    it('that throws "User? Not yet." when it fails', () => invalid
+    it('that throws "User? Not yet." when it fails', () => noUser
       .catch(e => expect(e.message).to.equal('User? Not yet.')))
   })
 
