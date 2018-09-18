@@ -11,7 +11,6 @@ function load(label) {
 // AUTHORIZATION REQUIRES A TOKEN //
 const github = {
   client: {
-    api: `https://api.github.com/`,
     options: {
       headers: {
         Accept: `application/vnd.github.v3+json`,
@@ -19,7 +18,8 @@ const github = {
         Authorization: `token ${load('auth')}`,
       },
     },
-    setupRequest(endpoint, { api, options } = github.client) {
+    setupRequest(endpoint, { options } = github.client) {
+      const api = `https://api.github.com/`
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
@@ -52,20 +52,12 @@ const github = {
       return request()
         .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
-    /*
-    setupRequest(`repos/${login}/${repo}/contents/${path} || README.md` { options, api: `https://api.github.com/` })
-      //sha if updating
 
-    })
-     },
-
-    }
-    // PUT /repos/:owner/:repo/contents/:path
-
-    */
+    // get sha if updating
     // let sha = load(`${repo}-readMe-sha`)
 
     createFile(login = load('login'), repo = load('repo'), path = 'README.md') {
+      // PUT /repos/:owner/:repo/contents/:path
       let options = {
         method: "PUT",
         headers: {

@@ -55,10 +55,6 @@ describe('github client', () => {
     expect(github.client).to.be.an('object')
   })
 
-  it('with an api string', () => {
-    expect(github.client.api).to.be.a('string')
-  })
-
   it('an options object', () => {
     expect(github.client.options).to.be.an('object')
   })
@@ -80,7 +76,7 @@ describe('github client', () => {
   })
 
   it('a createReadMe method', () => {
-    expect(github.client.commitReadMe).to.be.a('function')
+    expect(github.client.createFile).to.be.a('function')
   })
 
   describe('#github.client.setupRequest takes a github api endpoint string', () => {
@@ -176,6 +172,4 @@ describe('github client', () => {
     it('that throws "README? Not yet." when it fails', () => noReadMe
       .catch(e => expect(e.message).to.equal('README? Not yet.')))
   })
-
-  describe('#github.client.commitReadMe takes a login, commit message, name, email, path')
 })
