@@ -19,7 +19,7 @@ const github = {
         Authorization: `token ${load('auth')}`,
       },
     },
-    setupRequest(endpoint, { api, options } = this) {
+    setupRequest(endpoint, { api, options } = github.client) {
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
@@ -45,21 +45,40 @@ const github = {
         .catch(e => Promise.reject(new Error('Repos? Not yet.')))
     },
 
-    getRepo(login, repo) {
-      // make request to repos/login/repo
-      const request = github.client.setupRequest(`repos/${login}/${repo}`)
-      return request()
-        .catch(e => Promise.reject(new Error('Repo? Not yet.')))
-    },
-
     getReadMe(login, repo) {
       // make request to repos/login/repo/readme
       // then decode response.content with atob()
       const request = github.client.setupRequest(`repos/${login}/${repo}/readme`)
       return request()
-        .then(res => atob(res.content))
         .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
+    /*
+    { options: {
+        method: "POST",
+        headers: {
+          Accept: `application/vnd.github.v3+json`,
+          Authorization: 'token ' + load('auth')
+        },
+        body: JSON.stringify({
+          "message": "my commit message",
+          "committer": {
+            "name": "Scott Chacon",
+            "email": "schacon@gmail.com"
+          },
+       btoa() BASE64-encoded
+      "content": "bXkgbmV3IGZpbGUgY29udGVudHM=",
+      //sha if updating
+    })
+     },
+      api: `https://api.github.com/`
+    }
+    // PUT /repos/:owner/:repo/contents/:path
+
+    */
+
+    // commitReadMe() {
+    // post request to repos/
+    // }
   },
 }
 
@@ -131,13 +150,13 @@ function showReadMe() {
   // only change the text if a readme is found
   getReadMe(load('login'), load('repo'))
     .then((readMe) => {
-      save('cm-text', editor.getValue())
+      // save('cm-text', editor.getValue())
       setRepoName(load('repo'))
-      setCodeMirrorText(readMe)
+      setCodeMirrorText(atob(readMe))
     })
     .catch((e) => {
       let repo = load('repo')
-      save('cm-text', editor.getValue())
+      // save('cm-text', editor.getValue())
       setRepoName(repo)
       save(`${repo}-readMe`, 'Make a README :)')
       setCodeMirrorText('Make a README :)')
@@ -149,12 +168,17 @@ function getReadMe(login, repo) {
 
   // return promise-wrapped local value to support .then chaining
   if (localReadMe) {
-    return Promise.resolve(localReadMe)
+    return Promise.resolve(atob(localReadMe))
   } else {
     return github.client.getReadMe(login, repo)
-      .then((text) => {
-        save(`${repo}-readMe`, text)
-        return load(`${repo}-readMe`)
+      .then((readMe) => {
+        save(`${repo}-readMe`, readMe.content)
+        save(`${repo}-readMe-sha`, readMe.sha)
+        return atob(readMe.content)
       })
   }
 }
+/*
+ x = github.client.setupRequest(`repos/nicholasgriffen/rainy-day/contents/README.md`,
+ )
+*/

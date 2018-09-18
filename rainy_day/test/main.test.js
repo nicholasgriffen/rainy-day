@@ -75,12 +75,16 @@ describe('github client', () => {
     expect(github.client.getRepos).to.be.a('function')
   })
 
-  it('a getRepo method', () => {
-    expect(github.client.getRepo).to.be.a('function')
-  })
-
   it('a getReadMe method', () => {
     expect(github.client.getReadMe).to.be.a('function')
+  })
+
+  it('a getCommits method', () => {
+    expect(github.client.getCommits).to.be.a('function')
+  })
+
+  it('a commitReadMe method', () => {
+    expect(github.client.commitReadMe).to.be.a('function')
   })
 
   describe('#github.client.setupRequest takes a github api endpoint string', () => {
@@ -155,26 +159,6 @@ describe('github client', () => {
 
     it('that throws "Repos? Not yet." when it fails', () => noRepos
       .catch(e => expect(e.message).to.equal('Repos? Not yet.')))
-  })
-
-  describe('#github.client.getRepo takes a github login string and a repo name string', () => {
-    let repo
-    let noRepo
-
-    before(() => {
-      repo = github.client.getRepo(defaultLogin, defaultRepo)
-      noRepo = github.client.getRepo('-invalid-', '-invalid-')
-    })
-
-    it('returns a promise', () => {
-      expect(repo).to.be.a('promise')
-    })
-
-    it('that resolves to an object with .owner.login matching login', () => repo
-      .then(res => expect(res.owner.login).to.equal(defaultLogin)))
-
-    it('that throws "Repo? Not yet." when it fails', () => noRepo
-      .catch(e => expect(e.message).to.equal('Repo? Not yet.')))
   })
 
   describe('#github.client.getReadMe takes a github login string and a repo name string', () => {

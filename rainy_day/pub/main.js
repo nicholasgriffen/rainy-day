@@ -131,13 +131,13 @@ function showReadMe() {
   // only change the text if a readme is found
   getReadMe(load('login'), load('repo'))
     .then((readMe) => {
-      save('cm-text', editor.getValue())
+      // save('cm-text', editor.getValue())
       setRepoName(load('repo'))
       setCodeMirrorText(readMe)
     })
     .catch((e) => {
       let repo = load('repo')
-      save('cm-text', editor.getValue())
+      // save('cm-text', editor.getValue())
       setRepoName(repo)
       save(`${repo}-readMe`, 'Make a README :)')
       setCodeMirrorText('Make a README :)')
