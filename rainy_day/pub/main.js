@@ -85,19 +85,27 @@ function main() {
 
   function setEventListeners() {
     document.getElementById("showReadMe").addEventListener("click", showReadMe)
-    document.getElementById("login-form").addEventListener("submit", validateUserSaveRepos)
+    document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
   }
 
-  function validateUserSaveRepos(event) {
+  function validateUserShowReadMe(event) {
     event.preventDefault()
     let login = document.getElementById("login").value
-
-    // if login is valid, save user and find a repo
-    github.client.validateUser(login)
-      .then(() => save('login', login))
-      .then(() => github.client.getRepos(login))
-      .then(repos => save('repos', repos))
-      .catch(e => window.alert(e.message))
+    // only do stuff if user input is a new login
+    if (login !== load('login')) {
+      // if login is valid, save it and get repos,
+      // save repos, save first repo as repo
+      // show readme
+      github.client.validateUser(login)
+        .then(() => github.client.getRepos(login))
+        .then((repos) => {
+          save('repos', repos)
+          save('login', login)
+          save('repo', repos[0].name)
+          showReadMe()
+        })
+        .catch(e => window.alert(e.message))
+    }
   }
 }
 
@@ -128,8 +136,10 @@ function showReadMe() {
       setCodeMirrorText(readMe)
     })
     .catch((e) => {
+      let repo = load('repo')
       save('cm-text', editor.getValue())
-      setRepoName(load('repo'))
+      setRepoName(repo)
+      save(`${repo}-readMe`, 'Make a README :)')
       setCodeMirrorText('Make a README :)')
     })
 }
