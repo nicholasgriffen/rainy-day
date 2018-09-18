@@ -64,27 +64,22 @@ const github = {
 }
 
 // DOM //
+let editor
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
   if (console) console.log('running main')
 
-  let editor
   const defaultLogin = 'nicholasgriffen'
-  const defaultRepo = 'digijan'
+  const defaultRepo = 'rainy-day'
 
   if (!load('login') && !load('repo')) {
     saveDefaults(defaultLogin, defaultRepo)
   }
 
-  loadCodeMirror()
+  setRepoName(load('repo'))
+  loadCodeMirror(document.getElementById("editorContainer"))
   setEventListeners()
-
-  function loadCodeMirror() {
-    const editorContainer = document.getElementById("editorContainer")
-    editor = CodeMirror(editorContainer)
-    editor.value = load(`${load('repo')}-readMe`)
-  }
 
   function setEventListeners() {
     document.getElementById("showReadMe").addEventListener("click", showReadMe)
@@ -104,20 +99,37 @@ function main() {
   }
 }
 
+function loadCodeMirror(editorContainer) {
+  editor = CodeMirror(editorContainer)
+  setCodeMirrorText(load(`${load('repo')}-readMe`) || 'Make a README :)')
+}
+
+function setCodeMirrorText(value = 'Make a README :)') {
+  editor.setValue(value)
+}
+
+function setRepoName(name) {
+  document.getElementById("repoName").innerText = `${load('login')}/${name}`
+}
+
 function saveDefaults(defaultLogin, defaultRepo) {
   save('login', defaultLogin)
   save('repo', defaultRepo)
 }
 
 function showReadMe() {
-  const readMeContainer = document.getElementById("readMeContainer")
-
   // only change the text if a readme is found
   getReadMe(load('login'), load('repo'))
     .then((readMe) => {
-      readMeContainer.innerText = readMe
+      save('cm-text', editor.getValue())
+      setRepoName(load('repo'))
+      setCodeMirrorText(readMe)
     })
-    .catch(e => window.alert(e.message))
+    .catch((e) => {
+      save('cm-text', editor.getValue())
+      setRepoName(load('repo'))
+      setCodeMirrorText('Make a README :)')
+    })
 }
 
 function getReadMe(login, repo) {

@@ -1,17 +1,9 @@
 const { expect } = chai
 const defaultLogin = 'nicholasgriffen'
-const defaultRepo = 'digijan'
-let myDomElement
+const defaultRepo = 'rainy-day'
 
 describe('main', () => {
   if (console) console.log('testing main')
-
-  before(() => {
-    window.document.dispatchEvent(new Event("DOMContentLoaded", {
-      bubbles: true,
-      cancelable: true,
-    }))
-  })
 
   after(() => {
     localStorage.removeItem('savetest')
@@ -28,11 +20,11 @@ describe('main', () => {
 
   it('displays a readme at the click of a button', () => {
     let readMeButton = document.getElementById("showReadMe")
-    let readMeContainer = document.getElementById("readMeContainer")
+    let editorContainer = document.getElementById("editorContainer")
     // test fails without the Promise wrapper because innerText is read
     // before the readme is loaded - readme is loaded async
     Promise.resolve(readMeButton.click())
-      .then(() => expect(readMeContainer.innerText).to.not.be.empty)
+      .then(() => expect(editorContainer.innerText).to.not.be.empty)
   })
 
   describe('#save', () => {

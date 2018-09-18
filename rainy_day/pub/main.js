@@ -1,5 +1,3 @@
-// need to access codemirror editor globally
-let editor
 // UTILITY //
 function save(label, thing) {
   localStorage.setItem(`${label}`, JSON.stringify(thing))
@@ -66,6 +64,8 @@ const github = {
 }
 
 // DOM //
+// need to access codemirror editor globally
+let editor
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
@@ -79,7 +79,8 @@ function main() {
     saveDefaults(defaultLogin, defaultRepo)
   }
 
-  loadCodeMirror()
+  setRepoName(load('repo'))
+  loadCodeMirror(document.getElementById("editorContainer"))
   setEventListeners()
 
   function setEventListeners() {
@@ -95,36 +96,42 @@ function main() {
     github.client.validateUser(login)
       .then(() => save('login', login))
       .then(() => github.client.getRepos(login))
-      .then(res => save('repo', res[0].name))
+      .then(repos => save('repos', repos))
       .catch(e => window.alert(e.message))
   }
 }
 
-function loadCodeMirror() {
-  const editorContainer = document.getElementById("editorContainer")
-  editor = CodeMirror(editorContainer, {
-    value: load(`${load('repo')}-readMe`),
-  })
+function loadCodeMirror(editorContainer) {
+  editor = CodeMirror(editorContainer)
+  setCodeMirrorText(load(`${load('repo')}-readMe`) || 'Make a README :)')
 }
 
-function setCodeMirrorText(value = load(`${load('repo')}-readMe`)) {
+function setCodeMirrorText(value = 'Make a README :)') {
   editor.setValue(value)
 }
+
+function setRepoName(name) {
+  document.getElementById("repoName").innerText = `${load('login')}/${name}`
+}
+
 function saveDefaults(defaultLogin, defaultRepo) {
   save('login', defaultLogin)
   save('repo', defaultRepo)
 }
 
 function showReadMe() {
-  const readMeContainer = document.getElementById("readMeContainer")
-
   // only change the text if a readme is found
   getReadMe(load('login'), load('repo'))
     .then((readMe) => {
       save('cm-text', editor.getValue())
+      setRepoName(load('repo'))
       setCodeMirrorText(readMe)
     })
-    .catch(e => window.alert(e.message))
+    .catch((e) => {
+      save('cm-text', editor.getValue())
+      setRepoName(load('repo'))
+      setCodeMirrorText('Make a README :)')
+    })
 }
 
 function getReadMe(login, repo) {
