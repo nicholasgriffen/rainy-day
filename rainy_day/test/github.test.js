@@ -118,7 +118,7 @@ describe('github client', () => {
     })
 
     it('that resolves to an object with .owner.login matching login', () => repo
-      .then(res => expect(res.owner.login).to.equal(login)))
+      .then(res => expect(res.owner.login).to.equal(defaultLogin)))
 
     it('that throws "Repo? Not yet." when it fails', () => noRepo
       .catch(e => expect(e.message).to.equal('Repo? Not yet.')))
