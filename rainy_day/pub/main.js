@@ -1,3 +1,5 @@
+// need to access codemirror editor globally
+let editor
 // UTILITY //
 function save(label, thing) {
   localStorage.setItem(`${label}`, JSON.stringify(thing))
@@ -71,17 +73,21 @@ function main() {
 
   // github refers to usernames as login
   const defaultLogin = 'nicholasgriffen'
-  const defaultRepo = 'digijan'
-
+  const defaultRepo = 'rainy-day'
+  //
   if (!load('login') && !load('repo')) {
-    // make sure saves happen before readme is shown
-    Promise.resolve(saveDefaults(defaultLogin, defaultRepo))
-      .then(showReadMe())
+    saveDefaults(defaultLogin, defaultRepo)
   }
 
-  document.getElementById("showReadMe").addEventListener("click", showReadMe)
+  loadCodeMirror()
+  setEventListeners()
 
-  document.getElementById("login-form").addEventListener("submit", (event) => {
+  function setEventListeners() {
+    document.getElementById("showReadMe").addEventListener("click", showReadMe)
+    document.getElementById("login-form").addEventListener("submit", validateUserSaveRepos)
+  }
+
+  function validateUserSaveRepos(event) {
     event.preventDefault()
     let login = document.getElementById("login").value
 
@@ -91,9 +97,19 @@ function main() {
       .then(() => github.client.getRepos(login))
       .then(res => save('repo', res[0].name))
       .catch(e => window.alert(e.message))
+  }
+}
+
+function loadCodeMirror() {
+  const editorContainer = document.getElementById("editorContainer")
+  editor = CodeMirror(editorContainer, {
+    value: load(`${load('repo')}-readMe`),
   })
 }
 
+function setCodeMirrorText(value = load(`${load('repo')}-readMe`)) {
+  editor.setValue(value)
+}
 function saveDefaults(defaultLogin, defaultRepo) {
   save('login', defaultLogin)
   save('repo', defaultRepo)
@@ -105,7 +121,8 @@ function showReadMe() {
   // only change the text if a readme is found
   getReadMe(load('login'), load('repo'))
     .then((readMe) => {
-      readMeContainer.innerText = readMe
+      save('cm-text', editor.getValue())
+      setCodeMirrorText(readMe)
     })
     .catch(e => window.alert(e.message))
 }

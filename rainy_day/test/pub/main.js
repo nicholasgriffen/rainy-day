@@ -69,19 +69,29 @@ document.addEventListener("DOMContentLoaded", main)
 function main() {
   if (console) console.log('running main')
 
-
+  let editor
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = 'digijan'
 
   if (!load('login') && !load('repo')) {
-    // make sure saves happen before readme is shown
-    Promise.resolve(saveDefaults(defaultLogin, defaultRepo))
-      .then(showReadMe())
+    saveDefaults(defaultLogin, defaultRepo)
   }
 
-  document.getElementById("showReadMe").addEventListener("click", showReadMe)
+  loadCodeMirror()
+  setEventListeners()
 
-  document.getElementById("login-form").addEventListener("submit", (event) => {
+  function loadCodeMirror() {
+    const editorContainer = document.getElementById("editorContainer")
+    editor = CodeMirror(editorContainer)
+    editor.value = load(`${load('repo')}-readMe`)
+  }
+
+  function setEventListeners() {
+    document.getElementById("showReadMe").addEventListener("click", showReadMe)
+    document.getElementById("login-form").addEventListener("submit", validateUserSaveRepos)
+  }
+
+  function validateUserSaveRepos(event) {
     event.preventDefault()
     let login = document.getElementById("login").value
 
@@ -91,7 +101,7 @@ function main() {
       .then(() => github.client.getRepos(load('login')))
       .then(repos => save('repos', repos))
       .catch(e => window.alert(e.message))
-  })
+  }
 }
 
 function saveDefaults(defaultLogin, defaultRepo) {

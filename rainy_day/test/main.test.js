@@ -1,6 +1,7 @@
 const { expect } = chai
 const defaultLogin = 'nicholasgriffen'
 const defaultRepo = 'digijan'
+let myDomElement
 
 describe('main', () => {
   if (console) console.log('testing main')

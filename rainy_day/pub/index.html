@@ -2,24 +2,28 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <script src="../lib/github.js"></script>
     <script src="main.js"></script>
     <link rel="stylesheet" href="style.css">
+    <!-- CodeMirror includes -->
+    <script src="../lib/codemirror/codemirror.js"></script>
+    <script src="../lib/codemirror/mode/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="../lib/codemirror/codemirror.css">
     <title>Rainy Day</title>
   </head>
   <body>
     <header>
       <span id="branding">Rainy Day</span>
       <button id="showReadMe">Show Read Me</button>
-      <form id="login-form" name="login-form"> 
+      <form id="login-form" name="login-form">
         <input type="text" name="login" id="login" placeholder="github username"></input>
         <input type="submit" name="login-submit" id="login-submit"></input>
       </form>
     </header>
     <main>
       <h1>Try this</h1>
-      <div id="repos"></div>
+      <p id="repo-description"></p>
       <div id="readMeContainer"></div>
+      <div id="editorContainer"></div>
     </main>
   </body>
 </html>
