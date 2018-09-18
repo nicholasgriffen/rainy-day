@@ -1,7 +1,3 @@
-const { expect } = chai
-const defaultLogin = 'nicholasgriffen'
-const defaultRepo = 'digijan'
-
 describe('github client', () => {
   it('is an object', () => {
     expect(github.client).to.be.an('object')
@@ -49,19 +45,24 @@ describe('github client', () => {
   describe('#github.client.getRepos takes a github login string', () => {
     const testExp = new RegExp(`/repos/${defaultLogin}`)
     let repos
+
     before(() => {
       repos = github.client.getRepos(defaultLogin)
+      noRepos = github.client.getRepos('-invalid-')
     })
 
     it('returns a promise', () => {
       expect(repos).to.be.a('promise')
     })
 
-    it('that resolves to an array containing at least one object tagged with a url matching /repos/login', () => repos
+    it('that resolves to array with one or more object tagged with archive_url matching/repos/login', () => repos
       .then((res) => {
         expect(res).to.be.an('array')
         return expect(testExp.test(res[0].archive_url)).to.equal(true)
       }))
+
+    it('that throws an error when it fails', () => noRepos
+      .catch(e => expect(e).to.be.an('error')))
   })
 
   describe('#github.client.getReadMe takes a github login string and a repo name string', () => {
@@ -80,8 +81,8 @@ describe('github client', () => {
     it('that resolves to a non-empty string', () => readMe
       .then(res => expect(res).not.be.empty))
 
-    it('throws "Read Me not found" when request fails', () => noReadMe
-      .catch(e => expect(e.message).to.equal("Read Me not found")))
+    it('throws "README? Not yet." when it fails', () => noReadMe
+      .catch(e => expect(e.message).to.equal("README? Not yet.")))
   })
 
   describe('#github.client.validateUser takes a github login string', () => {
@@ -98,10 +99,10 @@ describe('github client', () => {
       expect(valid).to.be.a('promise')
     })
 
-    it('throws "User not found" when user is not valid', () => invalid
-      .catch(e => expect(e.message).to.equal('User not found')))
-
     it('resolves to an object containing the login when user is valid', () => valid
       .then(res => expect(res.login).to.equal(defaultLogin)))
+
+    it('throws "User not found" when user is not valid', () => invalid
+      .catch(e => expect(e.message).to.equal('User not found')))
   })
 })
