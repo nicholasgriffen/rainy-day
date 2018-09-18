@@ -1,6 +1,5 @@
-const auth = JSON.parse(localStorage.getItem('auth'))
-
 const github = {
+  const auth = JSON.parse(localStorage.getItem('auth'))
   client: {
     api: `https://api.github.com/`,
     options: {

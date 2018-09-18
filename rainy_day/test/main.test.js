@@ -1,13 +1,11 @@
 const { expect } = chai
 const defaultLogin = 'nicholasgriffen'
 const defaultRepo = 'digijan'
+
 describe('main', () => {
   if (console) console.log('testing main')
 
   before(() => {
-    localStorage.removeItem('login')
-    localStorage.removeItem('repo')
-
     window.document.dispatchEvent(new Event("DOMContentLoaded", {
       bubbles: true,
       cancelable: true,

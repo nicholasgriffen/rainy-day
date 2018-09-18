@@ -16,7 +16,8 @@ const github = {
         Accept: `application/vnd.github.v3+json`,
         Authorization: `token ${load('auth')}`,
       },
-    setupRequest(endpoint, { api, options } = github.client) {
+    },
+    setupRequest(endpoint, { api, options } = this) {
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
@@ -60,7 +61,6 @@ const github = {
   },
 }
 
-// DOM //
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
