@@ -44,8 +44,8 @@ describe('github client', () => {
   })
 
   describe('#github.client.getRepos takes a github login string', () => {
-    const testExp = new RegExp(`/repos/${defaultLogin}`)
     let repos
+    let noRepos
 
     before(() => {
       repos = github.client.getRepos(defaultLogin)
@@ -56,8 +56,10 @@ describe('github client', () => {
       expect(repos).to.be.a('promise')
     })
 
-    it('that resolves to array with one or more object tagged with archive_url matching/repos/login', () => repos
+    it('that resolves to array with one or more object.archive_url matching/repos/login', () => repos
       .then((res) => {
+        let testExp = new RegExp(`/repos/${defaultLogin}`)
+
         expect(res).to.be.an('array')
         return expect(testExp.test(res[0].archive_url)).to.equal(true)
       }))
