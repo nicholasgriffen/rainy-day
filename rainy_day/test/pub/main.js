@@ -30,7 +30,7 @@ const github = {
           return res.json()
         })
     },
-
+    // github refers to usernames as login
     validateUser(login) {
       // make request to users/login
       const request = github.client.setupRequest(`users/${login}`)
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", main)
 function main() {
   if (console) console.log('running main')
 
-  // github refers to usernames as login
+
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = 'digijan'
 
@@ -87,8 +87,8 @@ function main() {
     // if login is valid, save user and find a repo
     github.client.validateUser(login)
       .then(() => save('login', login))
-      .then(() => github.client.getRepos(login))
-      .then(res => save('repo', res[0].name))
+      .then(() => github.client.getRepos(load('login')))
+      .then(repos => save('repo', repos[0].name))
       .catch(e => window.alert(e.message))
   })
 }
