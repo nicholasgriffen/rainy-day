@@ -18,7 +18,8 @@ const github = {
         // COMMENT TO DISABLE AUTHORIZATION //
         Authorization: `token ${load('auth')}`,
       },
-    setupRequest(endpoint, { api, options } = github.client) {
+    },
+    setupRequest(endpoint, { api, options } = this) {
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
