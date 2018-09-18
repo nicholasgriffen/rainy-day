@@ -79,7 +79,7 @@ describe('github client', () => {
     expect(github.client.getReadMe).to.be.a('function')
   })
 
-  it('a commitReadMe method', () => {
+  it('a createReadMe method', () => {
     expect(github.client.commitReadMe).to.be.a('function')
   })
 
@@ -100,9 +100,9 @@ describe('github client', () => {
       expect(request()).to.be.a('promise')
     })
 
-    it('that throws `!200 Status Code:` on response with !200 status code', () => noRequest()
+    it('that throws `!20x Status Code:` on response with !20x status code', () => noRequest()
       .catch((e) => {
-        let testExp = new RegExp(`!200 Status Code:`)
+        let testExp = new RegExp(`!20x Status Code:`)
 
         return expect(testExp.test(e.message)).to.equal(true)
       }))

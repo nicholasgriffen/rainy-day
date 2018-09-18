@@ -24,8 +24,8 @@ const github = {
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
         .then((res) => {
-          if (res.status !== 200) {
-            return Promise.reject(new Error(`!200 Status Code: ${res.status}`))
+          if (!/20*/.test(res.status)) {
+            return Promise.reject(new Error(`!20x Status Code: ${res.status}`))
           }
           return res.json()
         })
@@ -63,9 +63,9 @@ const github = {
     // PUT /repos/:owner/:repo/contents/:path
 
     */
+    // let sha = load(`${repo}-readMe-sha`)
 
-    commitReadMe(login = load('login'), repo = load('repo'), path = 'README.md') {
-      let sha = load(`${repo}-readMe-sha`)
+    createFile(login = load('login'), repo = load('repo'), path = 'README.md') {
       let options = {
         method: "PUT",
         headers: {
