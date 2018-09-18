@@ -8,12 +8,14 @@ function load(label) {
 }
 
 // GITHUB CLIENT //
+// AUTHORIZATION REQUIRES A TOKEN //
 const github = {
   client: {
     api: `https://api.github.com/`,
     options: {
       headers: {
         Accept: `application/vnd.github.v3+json`,
+        // COMMENT TO DISABLE AUTHORIZATION //
         Authorization: `token ${load('auth')}`,
       },
     },
