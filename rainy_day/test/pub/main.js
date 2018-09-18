@@ -30,7 +30,7 @@ const github = {
           return res.json()
         })
     },
-    // github refers to usernames as login
+
     validateUser(login) {
       // make request to users/login
       const request = github.client.setupRequest(`users/${login}`)
@@ -64,16 +64,18 @@ const github = {
 }
 
 // DOM //
+// need to access codemirror editor globally
 let editor
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
   if (console) console.log('running main')
 
+  // github refers to usernames as login
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = 'rainy-day'
-
-  if (!load('login') && !load('repo')) {
+  //
+  if (!load('login')) {
     saveDefaults(defaultLogin, defaultRepo)
   }
 
@@ -83,19 +85,27 @@ function main() {
 
   function setEventListeners() {
     document.getElementById("showReadMe").addEventListener("click", showReadMe)
-    document.getElementById("login-form").addEventListener("submit", validateUserSaveRepos)
+    document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
   }
 
-  function validateUserSaveRepos(event) {
+  function validateUserShowReadMe(event) {
     event.preventDefault()
     let login = document.getElementById("login").value
-
-    // save login then get repos and save repos
-    github.client.validateUser(login)
-      .then(() => save('login', login))
-      .then(() => github.client.getRepos(load('login')))
-      .then(repos => save('repos', repos))
-      .catch(e => window.alert(e.message))
+    // only do stuff if user input is a new login
+    if (login !== load('login')) {
+      // if login is valid, save it and get repos,
+      // save repos, save first repo as repo
+      // show readme
+      github.client.validateUser(login)
+        .then(() => github.client.getRepos(login))
+        .then((repos) => {
+          save('repos', repos)
+          save('login', login)
+          save('repo', repos[0].name)
+          showReadMe()
+        })
+        .catch(e => window.alert(e.message))
+    }
   }
 }
 
@@ -126,8 +136,10 @@ function showReadMe() {
       setCodeMirrorText(readMe)
     })
     .catch((e) => {
+      let repo = load('repo')
       save('cm-text', editor.getValue())
-      setRepoName(load('repo'))
+      setRepoName(repo)
+      save(`${repo}-readMe`, 'Make a README :)')
       setCodeMirrorText('Make a README :)')
     })
 }
