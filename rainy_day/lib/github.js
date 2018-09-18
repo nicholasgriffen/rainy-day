@@ -15,7 +15,7 @@ const github = {
       return () => fetch(`${api}${endpoint}`, options)
         .then((res) => {
           if (res.status !== 200) {
-            return Promise.reject(new Error(res.status))
+            return Promise.reject(new Error(`!200 Status Code: ${res.status}`))
           }
           return res.json()
         })
@@ -25,14 +25,21 @@ const github = {
       // make request to users/login
       const request = github.client.setupRequest(`users/${login}`)
       return request()
-        .catch(e => Promise.reject(new Error("Repos? Not yet.")))
+        .catch(e => Promise.reject(new Error('User? Not yet.')))
     },
 
     getRepos(login) {
       // make request to users/login/repos
       const request = github.client.setupRequest(`users/${login}/repos`)
       return request()
-        .catch(e => Promise.reject(new Error(e)))
+        .catch(e => Promise.reject(new Error('Repos? Not yet.')))
+    },
+
+    getRepo(login, repo) {
+      // make request to repos/login/repo
+      const request = github.client.setupRequest(`repos/${login}/${repo}`)
+      return request()
+        .catch(e => Promise.reject(new Error('Repo? Not yet.')))
     },
 
     getReadMe(login, repo) {
@@ -41,7 +48,7 @@ const github = {
       const request = github.client.setupRequest(`repos/${login}/${repo}/readme`)
       return request()
         .then(res => atob(res.content))
-        .catch(e => Promise.reject(new Error("README? Not yet.")))
+        .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
   },
 }
