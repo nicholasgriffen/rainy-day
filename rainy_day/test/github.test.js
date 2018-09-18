@@ -33,6 +33,7 @@ describe('github client', () => {
 
   describe('#github.client.setupRequest takes a github api endpoint string', () => {
     let request
+    let noRequest
 
     before(() => {
       request = github.client.setupRequest(`users/nicholasgriffen/repos`)
