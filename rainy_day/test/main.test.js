@@ -79,10 +79,6 @@ describe('github client', () => {
     expect(github.client.getReadMe).to.be.a('function')
   })
 
-  it('a getCommits method', () => {
-    expect(github.client.getCommits).to.be.a('function')
-  })
-
   it('a commitReadMe method', () => {
     expect(github.client.commitReadMe).to.be.a('function')
   })
@@ -180,4 +176,6 @@ describe('github client', () => {
     it('that throws "README? Not yet." when it fails', () => noReadMe
       .catch(e => expect(e.message).to.equal('README? Not yet.')))
   })
+
+  describe('#github.client.commitReadMe takes a login, commit message, name, email, path')
 })

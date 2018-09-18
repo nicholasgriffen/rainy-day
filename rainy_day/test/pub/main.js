@@ -53,32 +53,37 @@ const github = {
         .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
     /*
-    { options: {
-        method: "POST",
-        headers: {
-          Accept: `application/vnd.github.v3+json`,
-          Authorization: 'token ' + load('auth')
-        },
-        body: JSON.stringify({
-          "message": "my commit message",
-          "committer": {
-            "name": "Scott Chacon",
-            "email": "schacon@gmail.com"
-          },
-       btoa() BASE64-encoded
-      "content": "bXkgbmV3IGZpbGUgY29udGVudHM=",
+    setupRequest(`repos/${login}/${repo}/contents/${path} || README.md` { options, api: `https://api.github.com/` })
       //sha if updating
+
     })
      },
-      api: `https://api.github.com/`
+
     }
     // PUT /repos/:owner/:repo/contents/:path
 
     */
 
-    // commitReadMe() {
-    // post request to repos/
-    // }
+    commitReadMe(login = load('login'), repo = load('repo'), path = 'README.md') {
+      let sha = load(`${repo}-readMe-sha`)
+      let options = {
+        method: "PUT",
+        headers: {
+          Accept: `application/vnd.github.v3+json`,
+          Authorization: `token ${load('auth')}`,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      }
+      options.body = JSON.stringify({
+        message: "made via api",
+        committer: {
+          name: "nicholasgriffen",
+          email: "nicholas.s.griffen@gmail.com",
+        },
+        content: btoa('This is a test'),
+      })
+      return github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, { options, api: `https://api.github.com/` })
+    },
   },
 }
 
@@ -174,6 +179,7 @@ function getReadMe(login, repo) {
       .then((readMe) => {
         save(`${repo}-readMe`, readMe.content)
         save(`${repo}-readMe-sha`, readMe.sha)
+        save(`${repo}-readMe-path`, readMe.path)
         return atob(readMe.content)
       })
   }
