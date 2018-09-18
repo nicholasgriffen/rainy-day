@@ -176,7 +176,3 @@ function getReadMe(login, repo) {
       })
   }
 }
-/*
- x = github.client.setupRequest(`repos/nicholasgriffen/rainy-day/contents/README.md`,
- )
-*/
