@@ -20,11 +20,19 @@ const github = {
           return res.json()
         })
     },
+
+    validateUser(login) {
+      // make request to users/login
+      const request = github.client.setupRequest(`users/${login}`)
+      return request()
+        .catch(e => Promise.reject(new Error("Repos? Not yet.")))
+    },
+
     getRepos(login) {
+      // make request to users/login/repos
       const request = github.client.setupRequest(`users/${login}/repos`)
       return request()
         .catch(e => Promise.reject(new Error(e)))
-        // .finally(() => Promise.resolve([{ archive_url: `/repos/${login}` }]))
     },
 
     getReadMe(login, repo) {
@@ -34,13 +42,6 @@ const github = {
       return request()
         .then(res => atob(res.content))
         .catch(e => Promise.reject(new Error("README? Not yet.")))
-    },
-
-    validateUser(login) {
-      // make request to users/user
-      const request = github.client.setupRequest(`users/${login}`)
-      return request()
-        .catch(e => Promise.reject(new Error("User not found")))
     },
   },
 }

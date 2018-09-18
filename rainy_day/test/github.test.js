@@ -99,10 +99,10 @@ describe('github client', () => {
       expect(valid).to.be.a('promise')
     })
 
-    it('resolves to an object containing the login when user is valid', () => valid
+    it('that resolves to an object containing the login when user is valid', () => valid
       .then(res => expect(res.login).to.equal(defaultLogin)))
 
-    it('throws "User not found" when user is not valid', () => invalid
-      .catch(e => expect(e.message).to.equal('User not found')))
+    it('that throws "Repos? Not yet." when it fails', () => invalid
+      .catch(e => expect(e.message).to.equal('Repos? Not yet.')))
   })
 })
