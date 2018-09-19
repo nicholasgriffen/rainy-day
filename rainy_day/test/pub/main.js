@@ -130,7 +130,9 @@ function main() {
 }
 
 function loadCodeMirror(editorContainer) {
-  editor = CodeMirror(editorContainer)
+  editor = CodeMirror(editorContainer, {
+    mode: "gfm",
+  })
   setCodeMirrorText(load(`${load('repo')}-readMe`) || 'Make a README :)')
 }
 
