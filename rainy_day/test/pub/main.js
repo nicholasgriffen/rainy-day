@@ -145,7 +145,7 @@ function saveDefaults(defaultLogin, defaultRepo) {
 
 function showReadMe() {
   // only change the text if a readme is found
-  getReadMe(load('login'), load('repo'))
+  loadReadMe(load('login'), load('repo'))
     .then((readMe) => {
       // save('cm-text', editor.getValue())
       setRepoName(load('repo'))
@@ -155,24 +155,24 @@ function showReadMe() {
       let repo = load('repo')
       // save('cm-text', editor.getValue())
       setRepoName(repo)
-      save(`${repo}-readMe`, 'Make a README :)')
+      save(`${repo}-readMe`, btoa('Make a README :)'))
       setCodeMirrorText('Make a README :)')
     })
 }
 
-function getReadMe(login, repo) {
+function loadReadMe(login, repo) {
   const localReadMe = load(`${repo}-readMe`)
 
   // return promise-wrapped local value to support .then chaining
   if (localReadMe) {
-    return Promise.resolve(atob(localReadMe))
+    return Promise.resolve(localReadMe)
   } else {
     return github.client.getReadMe(login, repo)
       .then((readMe) => {
         save(`${repo}-readMe`, readMe.content)
         save(`${repo}-readMe-sha`, readMe.sha)
         save(`${repo}-readMe-path`, readMe.path)
-        return atob(readMe.content)
+        return readMe.content)
       })
   }
 }
