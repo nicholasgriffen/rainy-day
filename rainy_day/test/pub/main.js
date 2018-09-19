@@ -145,7 +145,7 @@ function saveDefaults(defaultLogin, defaultRepo) {
 
 function showReadMe() {
   // only change the text if a readme is found
-  getReadMe(load('login'), load('repo'))
+  loadReadMe(load('login'), load('repo'))
     .then((readMe) => {
       // save('cm-text', editor.getValue())
       setRepoName(load('repo'))
@@ -160,7 +160,7 @@ function showReadMe() {
     })
 }
 
-function getReadMe(login, repo) {
+function loadReadMe(login, repo) {
   const localReadMe = load(`${repo}-readMe`)
 
   // return promise-wrapped local value to support .then chaining
