@@ -172,7 +172,7 @@ function loadReadMe(login, repo) {
         save(`${repo}-readMe`, readMe.content)
         save(`${repo}-readMe-sha`, readMe.sha)
         save(`${repo}-readMe-path`, readMe.path)
-        return readMe.content)
+        return readMe.content
       })
   }
 }

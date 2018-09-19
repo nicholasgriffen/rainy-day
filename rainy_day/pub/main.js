@@ -11,7 +11,6 @@ function load(label) {
 // AUTHORIZATION REQUIRES A TOKEN //
 const github = {
   client: {
-    api: `https://api.github.com/`,
     options: {
       headers: {
         Accept: `application/vnd.github.v3+json`,
@@ -19,13 +18,14 @@ const github = {
         Authorization: `token ${load('auth')}`,
       },
     },
-    setupRequest(endpoint, { api, options } = this) {
+    setupRequest(endpoint, { options } = github.client) {
+      const api = `https://api.github.com/`
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
         .then((res) => {
-          if (res.status !== 200) {
-            return Promise.reject(new Error(`!200 Status Code: ${res.status}`))
+          if (!/20*/.test(res.status)) {
+            return Promise.reject(new Error(`!20x Status Code: ${res.status}`))
           }
           return res.json()
         })
@@ -45,20 +45,36 @@ const github = {
         .catch(e => Promise.reject(new Error('Repos? Not yet.')))
     },
 
-    getRepo(login, repo) {
-      // make request to repos/login/repo
-      const request = github.client.setupRequest(`repos/${login}/${repo}`)
-      return request()
-        .catch(e => Promise.reject(new Error('Repo? Not yet.')))
-    },
-
     getReadMe(login, repo) {
       // make request to repos/login/repo/readme
       // then decode response.content with atob()
       const request = github.client.setupRequest(`repos/${login}/${repo}/readme`)
       return request()
-        .then(res => atob(res.content))
         .catch(e => Promise.reject(new Error('README? Not yet.')))
+    },
+
+    // get sha if updating
+    // let sha = load(`${repo}-readMe-sha`)
+
+    createFile(login = load('login'), repo = load('repo'), path = 'README.md') {
+      // PUT /repos/:owner/:repo/contents/:path
+      let options = {
+        method: "PUT",
+        headers: {
+          Accept: `application/vnd.github.v3+json`,
+          Authorization: `token ${load('auth')}`,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      }
+      options.body = JSON.stringify({
+        message: "made via api",
+        committer: {
+          name: "nicholasgriffen",
+          email: "nicholas.s.griffen@gmail.com",
+        },
+        content: btoa('This is a test'),
+      })
+      return github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, { options, api: `https://api.github.com/` })
     },
   },
 }
@@ -75,7 +91,7 @@ function main() {
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = 'rainy-day'
   //
-  if (!load('login') && !load('repo')) {
+  if (!load('login')) {
     saveDefaults(defaultLogin, defaultRepo)
   }
 
@@ -129,22 +145,22 @@ function saveDefaults(defaultLogin, defaultRepo) {
 
 function showReadMe() {
   // only change the text if a readme is found
-  getReadMe(load('login'), load('repo'))
+  loadReadMe(load('login'), load('repo'))
     .then((readMe) => {
       // save('cm-text', editor.getValue())
       setRepoName(load('repo'))
-      setCodeMirrorText(readMe)
+      setCodeMirrorText(atob(readMe))
     })
     .catch((e) => {
       let repo = load('repo')
       // save('cm-text', editor.getValue())
       setRepoName(repo)
-      save(`${repo}-readMe`, 'Make a README :)')
+      save(`${repo}-readMe`, btoa('Make a README :)'))
       setCodeMirrorText('Make a README :)')
     })
 }
 
-function getReadMe(login, repo) {
+function loadReadMe(login, repo) {
   const localReadMe = load(`${repo}-readMe`)
 
   // return promise-wrapped local value to support .then chaining
@@ -152,9 +168,11 @@ function getReadMe(login, repo) {
     return Promise.resolve(localReadMe)
   } else {
     return github.client.getReadMe(login, repo)
-      .then((text) => {
-        save(`${repo}-readMe`, text)
-        return load(`${repo}-readMe`)
+      .then((readMe) => {
+        save(`${repo}-readMe`, readMe.content)
+        save(`${repo}-readMe-sha`, readMe.sha)
+        save(`${repo}-readMe-path`, readMe.path)
+        return readMe.content
       })
   }
 }
