@@ -53,9 +53,6 @@ const github = {
         .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
 
-    // get sha if updating
-    // let sha = load(`${repo}-readMe-sha`)
-
     createFile(login = load('login'), repo = load('repo'), path = 'README.md') {
       // PUT /repos/:owner/:repo/contents/:path
       let options = {
@@ -65,16 +62,37 @@ const github = {
           Authorization: `token ${load('auth')}`,
           "Content-Type": "application/json; charset=utf-8",
         },
+        body: JSON.stringify({
+          message: "made via api",
+          committer: {
+            name: "nicholasgriffen",
+            email: "nicholas.s.griffen@gmail.com",
+          },
+          content: btoa('This is a test'),
+        }),
       }
-      options.body = JSON.stringify({
-        message: "made via api",
-        committer: {
-          name: "nicholasgriffen",
-          email: "nicholas.s.griffen@gmail.com",
+      return github.client.setupRequest(`repos/${login}/${repo.name}/contents/${path}`, options)
+    },
+
+    updateFile(login = load('login'), repo = load('repo'), path = "README.md", sha = load(`${repo}-readMe-sha`)) {
+      let options = {
+        method: "POST",
+        headers: {
+          Accept: `application/vnd.github.v3+json`,
+          Authorization: `token ${load('auth')}`,
+          "Content-Type": "application/json; charset=utf-8",
         },
-        content: btoa('This is a test'),
-      })
-      return github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, { options, api: `https://api.github.com/` })
+        body: JSON.stringify({
+          message: "made via api",
+          committer: {
+            name: "nicholasgriffen",
+            email: "nicholas.s.griffen@gmail.com",
+          },
+          content: btoa('This is a test'),
+          sha,
+        }),
+      }
+      return github.client.setupRequest(`repos/${login}/${repo.name}/contents/${path}`, options)
     },
   },
 }
@@ -89,39 +107,23 @@ function main() {
 
   // github refers to usernames as login
   const defaultLogin = 'nicholasgriffen'
-  const defaultRepo = 'rainy-day'
-  //
-  if (!load('login')) {
-    saveDefaults(defaultLogin, defaultRepo)
+  const defaultRepo = {
+    name: 'rainy-day',
+    description: 'Enter a github username to retrieve public repos for that user',
   }
 
-  setRepoName(load('repo'))
+  setDefaults(defaultLogin, defaultRepo)
+  setRepoName(load('repo').name)
+  if (load('repo').description) {
+    setRepoDescription(load('repo').description)
+  }
   loadCodeMirror(document.getElementById("editorContainer"))
   setEventListeners()
 
   function setEventListeners() {
     document.getElementById("showReadMe").addEventListener("click", showReadMe)
+    document.getElementById("changeRepo").addEventListener("click", changeRepo)
     document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
-  }
-
-  function validateUserShowReadMe(event) {
-    event.preventDefault()
-    let login = document.getElementById("login").value
-    // only do stuff if user input is a new login
-    if (login !== load('login')) {
-      // if login is valid, save it and get repos,
-      // save repos, save first repo as repo
-      // show readme
-      github.client.validateUser(login)
-        .then(() => github.client.getRepos(login))
-        .then((repos) => {
-          save('repos', repos)
-          save('login', login)
-          save('repo', repos[0].name)
-          showReadMe()
-        })
-        .catch(e => window.alert(e.message))
-    }
   }
 }
 
@@ -138,31 +140,66 @@ function setRepoName(name) {
   document.getElementById("repoName").innerText = `${load('login')}/${name}`
 }
 
-function saveDefaults(defaultLogin, defaultRepo) {
-  save('login', defaultLogin)
-  save('repo', defaultRepo)
+function setRepoDescription(description) {
+  document.getElementById("repoDescription").innerText = `${description}`
+}
+
+function setDefaults(defaultLogin, defaultRepo) {
+  if (!load('login')) {
+    save('login', defaultLogin)
+    save('repo', defaultRepo)
+    save('repos', [defaultRepo])
+  } else if (!load('repo') && load('repos')) {
+    save('repo', load('repos')[0].name)
+  }
+}
+
+function validateUserShowReadMe(event) {
+  event.preventDefault()
+  let login = document.getElementById("login").value
+  // only do stuff if user input is a new login
+  if (login !== load('login')) {
+    // if login is valid, save it and get repos,
+    // save repos, save first repo as repo
+    // show readme
+    github.client.validateUser(login)
+      .then(() => github.client.getRepos(login))
+      .then((repos) => {
+        save('repos', repos)
+        save('login', login)
+        save('repo', { name: repos[0].name, description: repos[0].description })
+        showReadMe()
+      })
+      .catch(e => window.alert(e.message))
+  }
 }
 
 function showReadMe() {
   // only change the text if a readme is found
-  loadReadMe(load('login'), load('repo'))
+  loadReadMe(load('login'), load('repo').name)
     .then((readMe) => {
+      let repo = load('repo')
       // save('cm-text', editor.getValue())
-      setRepoName(load('repo'))
+      setRepoName(repo.name)
+      if (repo.description) {
+        setRepoDescription(repo.description)
+      }
       setCodeMirrorText(atob(readMe))
     })
     .catch((e) => {
       let repo = load('repo')
       // save('cm-text', editor.getValue())
-      setRepoName(repo)
-      save(`${repo}-readMe`, btoa('Make a README :)'))
+      setRepoName(repo.name)
+      if (repo.description) {
+        setRepoDescription(repo.description)
+      }
+      save(`${repo.name}-readMe`, btoa('Make a README :)'))
       setCodeMirrorText('Make a README :)')
     })
 }
 
 function loadReadMe(login, repo) {
   const localReadMe = load(`${repo}-readMe`)
-
   // return promise-wrapped local value to support .then chaining
   if (localReadMe) {
     return Promise.resolve(localReadMe)
@@ -175,4 +212,9 @@ function loadReadMe(login, repo) {
         return readMe.content
       })
   }
+}
+
+function changeRepo() {
+  console.log('change repo')
+  load('repos').forEach(repo => console.log(repo.name))
 }

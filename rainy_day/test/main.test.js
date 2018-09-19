@@ -1,6 +1,6 @@
 const { expect } = chai
 const defaultLogin = 'nicholasgriffen'
-const defaultRepo = 'rainy-day'
+const defaultRepo = { name: 'rainy-day', description: 'Enter a github username to retrieve public repos for that user' }
 
 describe('main', () => {
   if (console) console.log('testing main')
@@ -10,12 +10,13 @@ describe('main', () => {
     localStorage.removeItem('loadtest')
     localStorage.removeItem('login')
     localStorage.removeItem('repo')
-    localStorage.removeItem(`${defaultRepo}-readMe`)
+    localStorage.removeItem(`${defaultRepo.name}-readMe`)
   })
 
   it('saves a default github login and repo', () => {
     expect(load('login')).to.equal(defaultLogin)
-    expect(load('repo')).to.equal(defaultRepo)
+    expect(load('repo').name).to.equal(defaultRepo.name)
+    expect(load('repo').description).to.equal(defaultRepo.description)
   })
 
   it('displays a readme at the click of a button', () => {
@@ -158,7 +159,7 @@ describe('github client', () => {
     let noReadMe
 
     before(() => {
-      readMe = github.client.getReadMe(defaultLogin, defaultRepo)
+      readMe = github.client.getReadMe(defaultLogin, defaultRepo.name)
       noReadMe = github.client.getReadMe(defaultLogin, '-invalid-')
     })
 
