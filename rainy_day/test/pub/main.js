@@ -18,7 +18,8 @@ const github = {
         Authorization: `token ${load('auth')}`,
       },
     },
-    setupRequest(endpoint, { options } = github.client) {
+    setupRequest(endpoint, options = github.client.options) {
+      console.log(options)
       const api = `https://api.github.com/`
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
@@ -53,46 +54,18 @@ const github = {
         .catch(e => Promise.reject(new Error('README? Not yet.')))
     },
 
-    createFile(login = load('login'), repo = load('repo'), path = 'README.md') {
+    sendFile(login, repo, path, body) {
       // PUT /repos/:owner/:repo/contents/:path
-      let options = {
+      const options = {
         method: "PUT",
         headers: {
           Accept: `application/vnd.github.v3+json`,
           Authorization: `token ${load('auth')}`,
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({
-          message: "made via api",
-          committer: {
-            name: "nicholasgriffen",
-            email: "nicholas.s.griffen@gmail.com",
-          },
-          content: btoa('This is a test'),
-        }),
+        body,
       }
-      return github.client.setupRequest(`repos/${login}/${repo.name}/contents/${path}`, options)
-    },
-
-    updateFile(login = load('login'), repo = load('repo'), path = "README.md", sha = load(`${repo}-readMe-sha`)) {
-      let options = {
-        method: "POST",
-        headers: {
-          Accept: `application/vnd.github.v3+json`,
-          Authorization: `token ${load('auth')}`,
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        body: JSON.stringify({
-          message: "made via api",
-          committer: {
-            name: "nicholasgriffen",
-            email: "nicholas.s.griffen@gmail.com",
-          },
-          content: btoa('This is a test'),
-          sha,
-        }),
-      }
-      return github.client.setupRequest(`repos/${login}/${repo.name}/contents/${path}`, options)
+      return github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, options)()
     },
   },
 }
@@ -201,7 +174,7 @@ function showReadMe() {
     })
     .catch((e) => {
       let repo = load('repo')
-      // save('cm-text', editor.getValue())
+
       setRepoName(repo.name)
       if (repo.description) {
         setRepoDescription(repo.description)
@@ -249,6 +222,33 @@ function changeRepo(event) {
   }
 }
 
-function saveReadMe() {
-  console.log('save')
+function saveReadMe(commit) {
+  // get editor contents
+  // base64 encode and save to local storage
+  // load path and sha
+  // build body
+  const content = btoa(editor.getValue())
+  const login = load('login')
+  const repo = load('repo').name
+  const path = load(`${repo}-readMe-path`) || 'README.md'
+  const sha = load(`${repo}-readMe-sha`)
+  const body = {
+    message: "made via api",
+    committer: {
+      name: "nicholasgriffen",
+      email: "nicholas.s.griffen@gmail.com",
+    },
+    content,
+  }
+
+  save(`${repo}-readMe`, content)
+  // if there is a sha add to body
+  if (sha) {
+    body.sha = sha
+  }
+  github.client.sendFile(login, repo, path, JSON.stringify(body))
+    .then((res) => {
+      save(`${repo}-readMe-sha`, res.content.sha)
+      console.log(res)
+    })
 }
