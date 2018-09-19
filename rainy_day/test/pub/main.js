@@ -116,13 +116,15 @@ function main() {
   setRepoName(load('repo').name)
   if (load('repo').description) {
     setRepoDescription(load('repo').description)
+  } else {
+    setRepoDescription('')
   }
   loadCodeMirror(document.getElementById("editorContainer"))
   setEventListeners()
 
   function setEventListeners() {
     document.getElementById("showReadMe").addEventListener("click", showReadMe)
-    document.getElementById("changeRepo").addEventListener("click", changeRepo)
+    document.getElementById("changeRepo").addEventListener("change", changeRepo)
     document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
   }
 }
@@ -148,10 +150,14 @@ function setDefaults(defaultLogin, defaultRepo) {
   if (!load('login')) {
     save('login', defaultLogin)
     save('repo', defaultRepo)
-    save('repos', [defaultRepo])
-  } else if (!load('repo') && load('repos')) {
-    save('repo', load('repos')[0].name)
   }
+  if (!load('repos')) {
+    github.client.getRepos(load('login'))
+      .then(repos => save('repos', repos))
+      .then(() => buildOptions())
+  }
+  showReadMe()
+  buildOptions()
 }
 
 function validateUserShowReadMe(event) {
@@ -169,6 +175,7 @@ function validateUserShowReadMe(event) {
         save('login', login)
         save('repo', { name: repos[0].name, description: repos[0].description })
         showReadMe()
+        buildOptions()
       })
       .catch(e => window.alert(e.message))
   }
@@ -183,6 +190,8 @@ function showReadMe() {
       setRepoName(repo.name)
       if (repo.description) {
         setRepoDescription(repo.description)
+      } else {
+        setRepoDescription('')
       }
       setCodeMirrorText(atob(readMe))
     })
@@ -214,7 +223,24 @@ function loadReadMe(login, repo) {
   }
 }
 
-function changeRepo() {
+function buildOptions() {
+  document.getElementById('changeRepo').innerHTML = `<option value="">Change Repo</option>`
+  load('repos').forEach((repo, index) => {
+    document.getElementById('changeRepo').innerHTML += `<option value=${index}>${repo.name}</option>`
+  })
+}
+function changeRepo(event) {
   console.log('change repo')
-  load('repos').forEach(repo => console.log(repo.name))
+  // pull repo out of repos
+  let repo = load('repos')[event.target.value]
+  // save repo
+  save('repo', { name: repo.name, description: repo.description })
+  // show readMe, set name, set description
+  showReadMe()
+  setRepoName(load('repo').name)
+  if (load('repo').description) {
+    setRepoDescription(load('repo').description)
+  } else {
+    setRepoDescription('')
+  }
 }

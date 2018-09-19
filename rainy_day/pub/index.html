@@ -2,8 +2,8 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <script src="main.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="../test/pub/main.js"></script>
+    <link rel="stylesheet" href="../test/pub/style.css">
     <!-- CodeMirror includes -->
     <script src="../lib/codemirror/codemirror.js"></script>
     <script src="../lib/codemirror/mode/javascript/javascript.js"></script>
@@ -23,7 +23,9 @@
     <main>
       <h1 id="repoName"></h1>
       <button id="showReadMe">Show Read Me</button>
-      <button id="changeRepo">Change Repo</button>
+      <select id="changeRepo">
+        <option value="">Change Repo</option>
+      </select>
       <p id="repoDescription"></p>
       <div id="readMeContainer"></div>
       <div id="editorContainer"></div>
