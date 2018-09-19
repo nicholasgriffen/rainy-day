@@ -123,7 +123,7 @@ function main() {
   setEventListeners()
 
   function setEventListeners() {
-    document.getElementById("showReadMe").addEventListener("click", showReadMe)
+    document.getElementById("saveReadMe").addEventListener("click", saveReadMe)
     document.getElementById("changeRepo").addEventListener("change", changeRepo)
     document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
   }
@@ -156,8 +156,10 @@ function setDefaults(defaultLogin, defaultRepo) {
       .then(repos => save('repos', repos))
       .then(() => buildOptions())
   }
+  if (load('repos')) {
+    buildOptions()
+  }
   showReadMe()
-  buildOptions()
 }
 
 function validateUserShowReadMe(event) {
@@ -243,4 +245,8 @@ function changeRepo(event) {
   } else {
     setRepoDescription('')
   }
+}
+
+function saveReadMe() {
+  console.log('save')
 }
