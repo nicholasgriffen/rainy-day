@@ -216,7 +216,7 @@ function changeRepo(event) {
   // pull repo out of repos
   let { name, description } = load('repos')[event.target.value]
   // save repo
-  save('repo', { name, description: })
+  save('repo', { name, description })
   // show readMe, set name, set description
   showReadMe()
   setRepoName(load('repo').name)
