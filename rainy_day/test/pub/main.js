@@ -65,7 +65,8 @@ const github = {
         },
         body,
       }
-      return github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, options)()
+      const request = github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, options)
+      return request()
     },
   },
 }
@@ -77,7 +78,6 @@ document.addEventListener("DOMContentLoaded", main)
 
 function main() {
   if (console) console.log('running main')
-
   // github refers to usernames as login
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = {
@@ -86,20 +86,24 @@ function main() {
   }
 
   setDefaults(defaultLogin, defaultRepo)
+
   setRepoName(load('repo').name)
+
   if (load('repo').description) {
     setRepoDescription(load('repo').description)
   } else {
     setRepoDescription('')
   }
-  loadCodeMirror(document.getElementById("editorContainer"))
-  setEventListeners()
 
-  function setEventListeners() {
-    document.getElementById("saveReadMe").addEventListener("click", saveReadMe)
-    document.getElementById("changeRepo").addEventListener("change", changeRepo)
-    document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
-  }
+  loadCodeMirror(document.getElementById("editorContainer"))
+
+  setEventListeners()
+}
+
+function setEventListeners() {
+  document.getElementById("saveReadMe").addEventListener("click", saveReadMe)
+  document.getElementById("changeRepo").addEventListener("change", changeRepo)
+  document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
 }
 
 function loadCodeMirror(editorContainer) {
@@ -206,12 +210,13 @@ function buildOptions() {
     document.getElementById('changeRepo').innerHTML += `<option value=${index}>${repo.name}</option>`
   })
 }
+
 function changeRepo(event) {
   console.log('change repo')
   // pull repo out of repos
-  let repo = load('repos')[event.target.value]
+  let { name, description } = load('repos')[event.target.value]
   // save repo
-  save('repo', { name: repo.name, description: repo.description })
+  save('repo', { name, description: })
   // show readMe, set name, set description
   showReadMe()
   setRepoName(load('repo').name)
@@ -249,6 +254,8 @@ function saveReadMe(commit) {
   github.client.sendFile(login, repo, path, JSON.stringify(body))
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
+      document.getElementById('saveStatus').innerText = 'Saved to github'
       console.log(res)
     })
+    .catch(() => document.getElementById('saveStatus').innerText = 'Saved locally')
 }
