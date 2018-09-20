@@ -5,18 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="mocha.css"/>
-    <!-- CodeMirror includes -->
+    <!-- CodeMirror  -->
     <script src="./lib/codemirror/codemirror.js"></script>
-    <script src="../lib/codemirror/addon/mode/overlay.js"></script>
-    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
-    <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
+    <script src="./lib/codemirror/addon/mode/overlay.js"></script>
+    <script src="./lib/codemirror/mode/markdown/markdown.js"></script>
+    <script src="./lib/codemirror/mode/gfm/gfm.js"></script>
     <link rel="stylesheet" href="./lib/codemirror/codemirror.css">
     <!-- Sakura -->
     <link rel="stylesheet" href="./lib/sakura.css">
+    <!-- Take Five modals-->
+    <link rel="stylesheet" href="./lib/takefive/takefive.css">
+    <!-- Rainy Day-->
     <link rel="stylesheet" href="./pub/style.css">
   </head>
   <body>
-    <header>
+    <header class="container">
       <span id="branding">Rainy Day</span>
       <form id="login-form" name="login-form">
         <input type="text" name="login" id="login" placeholder="github username"></input>
@@ -25,11 +28,26 @@
     </header>
     <main>
       <h1 id="repoName"></h1>
-      <button id="saveReadMe">Save Read Me</button>
-      <select id="changeRepo">
-        <option value="">Change Repo</option>
-      </select>
+      <div>
+        <button id="saveReadMe">Save Read Me</button>
+
+        <form name="commitForm" id="commitForm">
+          <label for="commitMessage">Commit Message</label>
+          <input name="commitMessage" id="commitMessage" type="text" required></input>
+          <label for="commiterName">Commiter Name</label>
+          <input name="commiterName" id="commiterName" type="text" required></input>
+          <label for="commiterEmail">Commiter Email Address</label>
+          <input name="commiterEmail" id="commiterEmail" type="email" required></input>
+        </form>
+
+        <span id="saveStatus"></span>
+
+        <select id="changeRepo">
+          <option value="">Change Repo</option>
+        </select>
+     </div>
       <p id="repoDescription"></p>
+
       <div id="editorContainer"></div>
     </main>
     <div id="mocha"></div>

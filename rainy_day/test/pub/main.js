@@ -19,7 +19,7 @@ const github = {
       },
     },
     setupRequest(endpoint, options = github.client.options) {
-      console.log(options)
+      console.log('github.client.setupRequest options', options)
       const api = `https://api.github.com/`
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
@@ -101,7 +101,7 @@ function main() {
 }
 
 function setEventListeners() {
-  document.getElementById("saveReadMe").addEventListener("click", saveReadMe)
+  document.getElementById("saveReadMe").addEventListener("click", promptCommit)
   document.getElementById("changeRepo").addEventListener("change", changeRepo)
   document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
 }
@@ -227,25 +227,40 @@ function changeRepo(event) {
   }
 }
 
+function promptCommit(event) {
+  event.preventDefault()
+
+  const message = document.getElementById('commitMessage').value
+  const name = document.getElementById('commiterName').value
+  const email = document.getElementById('commiterEmail').value
+
+  const commit = {
+    message,
+    committer: {
+      name,
+      email,
+    },
+  }
+
+  saveReadMe(commit)
+}
+
 function saveReadMe(commit) {
   // get editor contents
   // base64 encode and save to local storage
   // load path and sha
   // build body
+  const { message, commiter } = commit
   const content = btoa(editor.getValue())
+  const body = {
+    message,
+    committer,
+    content,
+  }
   const login = load('login')
   const repo = load('repo').name
   const path = load(`${repo}-readMe-path`) || 'README.md'
   const sha = load(`${repo}-readMe-sha`)
-  const body = {
-    message: "made via api",
-    committer: {
-      name: "nicholasgriffen",
-      email: "nicholas.s.griffen@gmail.com",
-    },
-    content,
-  }
-
   save(`${repo}-readMe`, content)
   // if there is a sha add to body
   if (sha) {
@@ -254,8 +269,8 @@ function saveReadMe(commit) {
   github.client.sendFile(login, repo, path, JSON.stringify(body))
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
-      document.getElementById('saveStatus').innerText = 'Saved to github'
+      document.getElementById('status').innerText = 'Saved to github'
       console.log(res)
     })
-    .catch(() => document.getElementById('saveStatus').innerText = 'Saved locally')
+    .catch(() => document.getElementById('status').innerText = 'Saved locally')
 }

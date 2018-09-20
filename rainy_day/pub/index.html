@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8">
     <script src="../test/pub/main.js"></script>
-    <link rel="stylesheet" href="../test/pub/style.css">
-    <!-- CodeMirror includes -->
-    <script src="../lib/codemirror/codemirror.js"></script>
-    <script src="../lib/codemirror/addon/mode/overlay.js"></script>
-    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
-    <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
-    <link rel="stylesheet" href="../lib/codemirror/codemirror.css">
+    <!-- CodeMirror -->
+    <script src="../test/lib/codemirror/codemirror.js"></script>
+    <script src="../test/lib/codemirror/addon/mode/overlay.js"></script>
+    <script src="../test/lib/codemirror/mode/markdown/markdown.js"></script>
+    <script src="../test/lib/codemirror/mode/gfm/gfm.js"></script>
+    <link rel="stylesheet" href="../test/lib/codemirror/codemirror.css">
     <!-- Sakura -->
-    <link rel="stylesheet" href="../lib/sakura.css">
+    <link rel="stylesheet" href="../test/lib/sakura.css">
+    <!-- Take Five modals-->
+    <link rel="stylesheet" href="./lib/takefive/takefive.css">
+    <!-- Rainy Day-->
+    <link rel="stylesheet" href="../test/pub/style.css">
     <title>Rainy Day</title>
   </head>
   <body>
-    <header>
+    <header class="container">
       <span id="branding">Rainy Day</span>
       <form id="login-form" name="login-form">
         <input type="text" name="login" id="login" placeholder="github username"></input>
@@ -24,13 +27,26 @@
     </header>
     <main>
       <h1 id="repoName"></h1>
-      <button id="saveReadMe">Save Read Me</button>
-      <span id="saveStatus"></span>
-      <select id="changeRepo">
-        <option value="">Change Repo</option>
-      </select>
+      <div>
+        <button id="saveReadMe">Save Read Me</button>
+
+        <form name="commitForm" id="commitForm">
+          <label for="commitMessage">Commit Message</label>
+          <input name="commitMessage" id="commitMessage" type="text" required></input>
+          <label for="commiterName">Commiter Name</label>
+          <input name="commiterName" id="commiterName" type="text" required></input>
+          <label for="commiterEmail">Commiter Email Address</label>
+          <input name="commiterEmail" id="commiterEmail" type="email" required></input>
+        </form>
+
+        <span id="saveStatus"></span>
+
+        <select id="changeRepo">
+          <option value="">Change Repo</option>
+        </select>
+      </div>
       <p id="repoDescription"></p>
-      <div id="readMeContainer"></div>
+
       <div id="editorContainer"></div>
     </main>
   </body>
