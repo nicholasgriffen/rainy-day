@@ -240,6 +240,7 @@ function changeRepo(event) {
   const { name, description } = load('repos')[event.target.value]
   // save repo
   save('repo', { name, description })
+  document.getElementById('saveStatus').innerText = ''
   // show readMe, set name, set description
   showReadMe()
   setRepoName(load('repo').name)
@@ -291,12 +292,12 @@ function saveReadMe(commit) {
   github.client.sendFile(login, repo, path, JSON.stringify(body))
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
-      // document.getElementById('status').innerText = 'Saved to github'
+      document.getElementById('saveStatus').innerText = 'saved: github'
       console.log('saved to github', res)
     })
     .catch((e) => {
       console.log('saved locally', e)
-    // document.getElementById('status').innerText = 'Saved locally'
+      document.getElementById('saveStatus').innerText = 'saved: local'
     })
   document.getElementById('modalClose').click()
 }

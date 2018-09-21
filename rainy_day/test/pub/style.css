@@ -8,3 +8,7 @@
 .modalClose {
   float: right;
 }
+
+.saveStatus {
+  color: green;
+}
