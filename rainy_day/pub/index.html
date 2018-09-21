@@ -19,10 +19,12 @@
   </head>
   <body>
     <header class="container">
-      <span id="branding">Rainy Day</span>
+      <span id="branding">rainy day</span>
       <form id="loginForm" name="loginForm">
         <input type="text" name="login" id="login" placeholder="github username"></input>
-        <input type="submit" name="login-submit" id="login-submit"></input>
+        <input type="submit" name="loginSubmit" id="loginSubmit" value="query user"></input>
+        <input type="text" name="auth" id="auth" placeholder="optional access token"></input>
+        <input type="submit" name="authSubmit" id="authSubmit" value="store access token"></input>
       </form>
     </header>
     <main>
@@ -31,7 +33,6 @@
         <a href="#commitModal">git commit</a>
         <span id="saveStatus"></span>
         <select id="changeRepo">
-          <option value="">Change Repo</option>
         </select>
       </div>
       <article id="commitModal" class="slide">
@@ -43,7 +44,7 @@
           <label for="commiterEmail">Commiter Email Address</label>
           <input name="commiterEmail" id="commiterEmail" type="email" required></input>
           <label for="commitMessage">Commit Message</label>
-          <input name="commitMessage" id="commitMessage" type="text" required></input>
+          <input name="commitMessage" id="commitMessage" type="textarea" required></input>
           <br>
           <button type="submit" name="saveCommit" id="saveCommit">git push</button>
         </form>

@@ -214,7 +214,7 @@ function loadReadMe(login, repo) {
 }
 
 function buildOptions() {
-  document.getElementById('changeRepo').innerHTML = `<option value="">Change Repo</option>`
+  document.getElementById('changeRepo').innerHTML = `<option value="">change repo</option>`
   load('repos').forEach((repo, index) => {
     document.getElementById('changeRepo').innerHTML += `<option value=${index}>${repo.name}</option>`
   })

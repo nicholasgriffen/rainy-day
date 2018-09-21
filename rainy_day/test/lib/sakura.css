@@ -144,7 +144,7 @@ textarea {
     outline: 0; }
 
 textarea, select, input[type] {
-  color: #d9d8dc;
+  color: #eb99a1;
   padding: 6px 10px;
   /* The 6px vertically centers text on FF, ignored by Webkit */
   margin-bottom: 10px;
