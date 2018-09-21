@@ -176,8 +176,9 @@ function validateUserShowReadMe(event) {
         showReadMe()
 
         buildOptions()
+        document.getElementById('saveStatus').innerText = ''
       })
-      .catch(e => window.alert(e.message))
+      .catch(e => document.getElementById('saveStatus').innerText = e.message)
   }
 }
 
