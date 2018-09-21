@@ -18,13 +18,13 @@
 \*/
 
 
-@font-face {
+/* @font-face { */
 /*
 	:: The font used by Take five! ::
 */
-	font-family: "report";
+	/* font-family: "report";
 	src: url("fonts/1942-report/webfont.eot") format("embedded-opentype"), url("fonts/1942-report/webfont.woff") format("woff"), url("fonts/1942-report/webfont.ttf") format("truetype"), url("fonts/1942-report/webfont.svg") format("svg");
-}
+} */
 
 /*\
 |*|
@@ -79,11 +79,6 @@ article.slide:not(.no-hashtag):target::after {
 	bottom: 0;
 }
 
-article.slide:not(.no-hashtag)::after {
-	content: "hashtag: #" attr(id);
-	right: 0;
-}
-
 article.slide[data-context]::before {
 	content: attr(data-context);
 	left: 0;
@@ -95,7 +90,7 @@ article.slide[data-context]::before {
 |*|
 \*/
 
-article.slide a[href], 
+article.slide a[href],
 article.slide a[href]:hover,
 article.slide a[href]:active,
 article.slide a[href]:visited {
@@ -501,7 +496,7 @@ article.slide > nav:first-of-type a[href]:not([rel~="parent"]):not([rel~="child"
 article.slide > nav:first-of-type a[href][rel]:not([data-label]):not(.no-label):not(:empty)::before {
 	content: attr(rel);
 	text-transform: capitalize;
-	
+
 }
 
 /* Known "rel" attributes */
@@ -897,4 +892,3 @@ article.slide code {
 	  |*                *|
 	  |*                *|
 	\**********************/
-

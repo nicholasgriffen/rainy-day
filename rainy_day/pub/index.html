@@ -12,7 +12,7 @@
     <!-- Sakura -->
     <link rel="stylesheet" href="../test/lib/sakura.css">
     <!-- Take Five modals-->
-    <link rel="stylesheet" href="./lib/takefive/takefive.css">
+    <link rel="stylesheet" href="../test/lib/takefive/takefive.css">
     <!-- Rainy Day-->
     <link rel="stylesheet" href="../test/pub/style.css">
     <title>Rainy Day</title>
@@ -20,33 +20,35 @@
   <body>
     <header class="container">
       <span id="branding">Rainy Day</span>
-      <form id="login-form" name="login-form">
+      <form id="loginForm" name="loginForm">
         <input type="text" name="login" id="login" placeholder="github username"></input>
         <input type="submit" name="login-submit" id="login-submit"></input>
       </form>
     </header>
     <main>
       <h1 id="repoName"></h1>
-      <div>
-        <button id="saveReadMe">Save Read Me</button>
-
-        <form name="commitForm" id="commitForm">
-          <label for="commitMessage">Commit Message</label>
-          <input name="commitMessage" id="commitMessage" type="text" required></input>
-          <label for="commiterName">Commiter Name</label>
-          <input name="commiterName" id="commiterName" type="text" required></input>
-          <label for="commiterEmail">Commiter Email Address</label>
-          <input name="commiterEmail" id="commiterEmail" type="email" required></input>
-        </form>
-
+      <div class="container">
+        <a href="#commitModal">git commit</a>
         <span id="saveStatus"></span>
-
         <select id="changeRepo">
           <option value="">Change Repo</option>
         </select>
       </div>
+      <article id="commitModal" class="slide">
+        <form name="commitForm" id="commitForm">
+          <a href="#" id="modalClose" class="modalClose">X</a>
+          <br>
+          <label for="commiterName">Commiter Name</label>
+          <input name="commiterName" id="commiterName" type="text" required></input>
+          <label for="commiterEmail">Commiter Email Address</label>
+          <input name="commiterEmail" id="commiterEmail" type="email" required></input>
+          <label for="commitMessage">Commit Message</label>
+          <input name="commitMessage" id="commitMessage" type="text" required></input>
+          <br>
+          <button type="submit" name="saveCommit" id="saveCommit">git push</button>
+        </form>
+      </article>
       <p id="repoDescription"></p>
-
       <div id="editorContainer"></div>
     </main>
   </body>
