@@ -8,7 +8,7 @@ function load(label) {
 }
 
 // GITHUB CLIENT //
-// AUTHORIZATION REQUIRES A TOKEN //
+// AUTHORIZATION TOKEN LOADED FROM LOCALSTORAGE //
 const github = {
   client: {
     options: {
@@ -33,22 +33,21 @@ const github = {
     },
 
     validateUser(login) {
-      // make request to users/login
+      // GET users/login
       const request = github.client.setupRequest(`users/${login}`)
       return request()
         .catch(e => Promise.reject(new Error('User? Not yet.')))
     },
 
     getRepos(login) {
-      // make request to users/login/repos
+      // GET users/login/repos
       const request = github.client.setupRequest(`users/${login}/repos`)
       return request()
         .catch(e => Promise.reject(new Error('Repos? Not yet.')))
     },
 
     getReadMe(login, repo) {
-      // make request to repos/login/repo/readme
-      // then decode response.content with atob()
+      // GET repos/login/repo/readme
       const request = github.client.setupRequest(`repos/${login}/${repo}/readme`)
       return request()
         .catch(e => Promise.reject(new Error('README? Not yet.')))
@@ -74,10 +73,10 @@ const github = {
 // DOM //
 // need to access codemirror editor globally
 let editor
+
 document.addEventListener("DOMContentLoaded", main)
 
 function main() {
-  if (console) console.log('running main')
   // github refers to usernames as login
   const defaultLogin = 'nicholasgriffen'
   const defaultRepo = {
@@ -101,9 +100,9 @@ function main() {
 }
 
 function setEventListeners() {
-  document.getElementById("saveReadMe").addEventListener("click", promptCommit)
+  document.getElementById("saveCommit").addEventListener("click", saveCommit)
   document.getElementById("changeRepo").addEventListener("change", changeRepo)
-  document.getElementById("login-form").addEventListener("submit", validateUserShowReadMe)
+  document.getElementById("loginForm").addEventListener("submit", validateUserShowReadMe)
 }
 
 function loadCodeMirror(editorContainer) {
@@ -130,14 +129,17 @@ function setDefaults(defaultLogin, defaultRepo) {
     save('login', defaultLogin)
     save('repo', defaultRepo)
   }
+
   if (!load('repos')) {
     github.client.getRepos(load('login'))
       .then(repos => save('repos', repos))
       .then(() => buildOptions())
   }
+
   if (load('repos')) {
     buildOptions()
   }
+
   showReadMe()
 }
 
@@ -155,7 +157,9 @@ function validateUserShowReadMe(event) {
         save('repos', repos)
         save('login', login)
         save('repo', { name: repos[0].name, description: repos[0].description })
+
         showReadMe()
+
         buildOptions()
       })
       .catch(e => window.alert(e.message))
@@ -166,24 +170,26 @@ function showReadMe() {
   // only change the text if a readme is found
   loadReadMe(load('login'), load('repo').name)
     .then((readMe) => {
-      let repo = load('repo')
-      // save('cm-text', editor.getValue())
-      setRepoName(repo.name)
-      if (repo.description) {
-        setRepoDescription(repo.description)
+      const { name, description } = load('repo')
+
+      setRepoName(name)
+      if (description) {
+        setRepoDescription(description)
       } else {
         setRepoDescription('')
       }
+
       setCodeMirrorText(atob(readMe))
     })
     .catch((e) => {
-      let repo = load('repo')
+      const { name, description } = load('repo')
 
-      setRepoName(repo.name)
-      if (repo.description) {
-        setRepoDescription(repo.description)
+      setRepoName(name)
+      if (description) {
+        setRepoDescription(description)
       }
-      save(`${repo.name}-readMe`, btoa('Make a README :)'))
+
+      save(`${name}-readMe`, btoa('Make a README :)'))
       setCodeMirrorText('Make a README :)')
     })
 }
@@ -196,10 +202,13 @@ function loadReadMe(login, repo) {
   } else {
     return github.client.getReadMe(login, repo)
       .then((readMe) => {
-        save(`${repo}-readMe`, readMe.content)
-        save(`${repo}-readMe-sha`, readMe.sha)
-        save(`${repo}-readMe-path`, readMe.path)
-        return readMe.content
+        let { content, sha, path } = readMe
+
+        save(`${repo}-readMe`, content)
+        save(`${repo}-readMe-sha`, sha)
+        save(`${repo}-readMe-path`, path)
+
+        return content
       })
   }
 }
@@ -212,9 +221,8 @@ function buildOptions() {
 }
 
 function changeRepo(event) {
-  console.log('change repo')
   // pull repo out of repos
-  let { name, description } = load('repos')[event.target.value]
+  const { name, description } = load('repos')[event.target.value]
   // save repo
   save('repo', { name, description })
   // show readMe, set name, set description
@@ -227,7 +235,7 @@ function changeRepo(event) {
   }
 }
 
-function promptCommit(event) {
+function saveCommit(event) {
   event.preventDefault()
 
   const message = document.getElementById('commitMessage').value
@@ -236,12 +244,11 @@ function promptCommit(event) {
 
   const commit = {
     message,
-    committer: {
+    commiter: {
       name,
       email,
     },
   }
-
   saveReadMe(commit)
 }
 
@@ -254,7 +261,7 @@ function saveReadMe(commit) {
   const content = btoa(editor.getValue())
   const body = {
     message,
-    committer,
+    commiter,
     content,
   }
   const login = load('login')
@@ -270,7 +277,11 @@ function saveReadMe(commit) {
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
       document.getElementById('status').innerText = 'Saved to github'
-      console.log(res)
+      console.log('saved to github', res)
     })
-    .catch(() => document.getElementById('status').innerText = 'Saved locally')
+    .catch((e) => {
+      console.log('saved locally', e)
+      document.getElementById('status').innerText = 'Saved locally'
+    })
+  document.getElementById('modalClose').click()
 }
