@@ -2,7 +2,7 @@ const { expect } = chai
 const defaultLogin = 'nicholasgriffen'
 const defaultRepo = {
   name: 'rainy-day',
-  description: 'Enter a github username to retrieve public repos for that user',
+  description: 'View, edit, and push github READMEs in the browser',
 }
 const testRepo = 'api-test'
 
