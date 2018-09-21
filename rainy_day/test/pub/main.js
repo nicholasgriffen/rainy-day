@@ -103,6 +103,7 @@ function setEventListeners() {
   document.getElementById("saveCommit").addEventListener("click", saveCommit)
   document.getElementById("changeRepo").addEventListener("change", changeRepo)
   document.getElementById("loginForm").addEventListener("submit", validateUserShowReadMe)
+  document.getElementById("authSubmit").addEventListener("submit", saveAuth)
 }
 
 function loadCodeMirror(editorContainer) {
@@ -143,6 +144,10 @@ function setDefaults(defaultLogin, defaultRepo) {
   showReadMe()
 }
 
+function saveAuth(event) {
+  let auth = document.getElementById("auth").value
+  save('auth', auth)
+}
 function validateUserShowReadMe(event) {
   event.preventDefault()
   let login = document.getElementById("login").value
@@ -276,7 +281,7 @@ function saveReadMe(commit) {
   github.client.sendFile(login, repo, path, JSON.stringify(body))
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
-      document.getElementById('status').innerText = 'Saved to github'
+      //document.getElementById('status').innerText = 'Saved to github'
       console.log('saved to github', res)
     })
     .catch((e) => {

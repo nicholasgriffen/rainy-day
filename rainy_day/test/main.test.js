@@ -4,6 +4,7 @@ const defaultRepo = {
   name: 'rainy-day',
   description: 'Enter a github username to retrieve public repos for that user',
 }
+const testRepo = 'api-test'
 
 describe('rainy-day', () => {
   after(() => {
@@ -14,6 +15,9 @@ describe('rainy-day', () => {
     localStorage.removeItem(`${defaultRepo.name}-readMe`)
     localStorage.removeItem(`${defaultRepo.name}-readMe-sha`)
     localStorage.removeItem(`${defaultRepo.name}-readMe-path`)
+    localStorage.removeItem(`${testRepo}-readMe`)
+    localStorage.removeItem(`${testRepo}-readMe-sha`)
+    localStorage.removeItem(`${testRepo}-readMe-path`)
   })
 
   describe('main', () => {
@@ -165,7 +169,7 @@ describe('rainy-day', () => {
       let noReadMe
 
       before(() => {
-        readMe = github.client.getReadMe(defaultLogin, defaultRepo.name)
+        readMe = github.client.getReadMe(defaultLogin, testRepo)
         noReadMe = github.client.getReadMe(defaultLogin, '-invalid-')
       })
 
@@ -174,7 +178,15 @@ describe('rainy-day', () => {
       })
 
       it('that resolves to a non-empty string', () => readMe
-        .then(res => expect(res).not.be.empty))
+        .then((res) => {
+          let { content, sha, path } = res
+
+          save(`${testRepo}-readMe`, content)
+          save(`${testRepo}-readMe-sha`, sha)
+          save(`${testRepo}-readMe-path`, path)
+
+          return expect(res).not.be.empty
+        }))
 
       it('that throws "README? Not yet." when it fails', () => noReadMe
         .catch(e => expect(e.message).to.equal('README? Not yet.')))
@@ -185,8 +197,8 @@ describe('rainy-day', () => {
       let noFile
 
       before(() => {
-        let repo = load('repo').name
-        let content = load(`${repo}-readMe`)
+        let repo = testRepo
+        let content = btoa(`Added by test runner`)
         let sha = load(`${repo}-readMe-sha`)
         let path = load(`${repo}-readMe-path`)
         let body = {
