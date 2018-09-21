@@ -14,13 +14,15 @@ const github = {
     options: {
       headers: {
         Accept: `application/vnd.github.v3+json`,
-        // COMMENT TO DISABLE AUTHORIZATION //
-        Authorization: `token ${load('auth')}`,
       },
     },
     setupRequest(endpoint, options = github.client.options) {
       console.log('github.client.setupRequest options', options)
       const api = `https://api.github.com/`
+      const token = load('auth')
+      if (token) {
+        options.headers.Authorization = `token ${token}`
+      }
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
       return () => fetch(`${api}${endpoint}`, options)
@@ -55,14 +57,17 @@ const github = {
 
     sendFile(login, repo, path, body) {
       // PUT /repos/:owner/:repo/contents/:path
+      const token = load('auth')
       const options = {
         method: "PUT",
         headers: {
           Accept: `application/vnd.github.v3+json`,
-          Authorization: `token ${load('auth')}`,
           "Content-Type": "application/json; charset=utf-8",
         },
         body,
+      }
+      if (token) {
+        options.headers.Authorization = `token ${token}`
       }
       const request = github.client.setupRequest(`repos/${login}/${repo}/contents/${path}`, options)
       return request()
@@ -103,7 +108,7 @@ function setEventListeners() {
   document.getElementById("saveCommit").addEventListener("click", saveCommit)
   document.getElementById("changeRepo").addEventListener("change", changeRepo)
   document.getElementById("loginForm").addEventListener("submit", validateUserShowReadMe)
-  document.getElementById("authSubmit").addEventListener("submit", saveAuth)
+  document.getElementById("authForm").addEventListener("submit", saveAuth)
 }
 
 function loadCodeMirror(editorContainer) {
@@ -146,9 +151,13 @@ function setDefaults(defaultLogin, defaultRepo) {
 }
 
 function saveAuth(event) {
+  event.preventDefault()
   let auth = document.getElementById("auth").value
+  console.log('saving')
   save('auth', auth)
+  document.getElementById('auth').value = ''
 }
+
 function validateUserShowReadMe(event) {
   event.preventDefault()
   let login = document.getElementById("login").value
