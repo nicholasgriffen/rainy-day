@@ -153,8 +153,8 @@ function setDefaults(defaultLogin, defaultRepo) {
 function saveAuth(event) {
   event.preventDefault()
   let auth = document.getElementById("auth").value
-  console.log('saving')
-  save('auth', auth)
+  console.log('saving', auth)
+  if (auth) save('auth', auth)
   document.getElementById('auth').value = ''
 }
 
