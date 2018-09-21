@@ -1,5 +1,5 @@
 ## READ ME 
-!(How it looks)[https://imgur.com/a/qd7Kcvn]
+![How it looks](https://imgur.com/a/qd7Kcvn)
 1) Enter github username and select 'query user' to load that user's public repos and associated READMEs
 2) Change repos with the dropdown menu above 
 3) Create or edit a README right here  
