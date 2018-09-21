@@ -192,7 +192,7 @@ describe('rainy-day', () => {
         .catch(e => expect(e.message).to.equal('README? Not yet.')))
     })
 
-    describe('#github.client.sendFile takes a login and a repo name, a file path string, and a body JSON string', () => {
+    describe('#github.client.sendFile takes a login, a repo name, a file path string, and a body JSON string', () => {
       let file
       let noFile
 
@@ -211,13 +211,15 @@ describe('rainy-day', () => {
           sha,
         }
         file = github.client.sendFile(defaultLogin, repo, path, JSON.stringify(body))
+        noFile = github.client.sendFile(defaultLogin, repo, path, body)
       })
 
       it('resolves to an object with non-empty commit and content keys', () => file
-        .then((res) => {
-          expect(res.commit).not.be.empty
-          expect(res.content).not.be.empty
-        }))
+        .then(res => (expect(res.content).not.be.empty && expect(res.commit).not.be.empty)))
+
+      it('throws an error if it fails', () => noFile
+        .catch(e => expect(e).to.be.an('error'))
+      )
     })
   })
 })

@@ -109,6 +109,7 @@ function setEventListeners() {
 function loadCodeMirror(editorContainer) {
   editor = CodeMirror(editorContainer, {
     mode: "gfm",
+    lineWrapping: true,
   })
   setCodeMirrorText(load(`${load('repo')}-readMe`) || 'Make a README :)')
 }
@@ -281,12 +282,12 @@ function saveReadMe(commit) {
   github.client.sendFile(login, repo, path, JSON.stringify(body))
     .then((res) => {
       save(`${repo}-readMe-sha`, res.content.sha)
-      //document.getElementById('status').innerText = 'Saved to github'
+      // document.getElementById('status').innerText = 'Saved to github'
       console.log('saved to github', res)
     })
     .catch((e) => {
       console.log('saved locally', e)
-      document.getElementById('status').innerText = 'Saved locally'
+    // document.getElementById('status').innerText = 'Saved locally'
     })
   document.getElementById('modalClose').click()
 }
