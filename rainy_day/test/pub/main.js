@@ -38,7 +38,7 @@ const github = {
       // GET users/login
       const request = github.client.setupRequest(`users/${login}`)
       return request()
-        .catch(e => Promise.reject(new Error('User? Not yet.')))
+        .catch(e => Promise.reject(new Error('github user not found')))
     },
 
     getRepos(login) {
@@ -177,8 +177,12 @@ function validateUserShowReadMe(event) {
 
         buildOptions()
         document.getElementById('saveStatus').innerText = ''
+        document.getElementById('saveStatus').classList.remove('error')
       })
-      .catch(e => document.getElementById('saveStatus').innerText = e.message)
+      .catch((e) => {
+        document.getElementById('saveStatus').innerText = e.message
+        document.getElementById('saveStatus').classList.add('error')
+      })
   }
 }
 

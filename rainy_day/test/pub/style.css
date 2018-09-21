@@ -12,3 +12,7 @@
 .saveStatus {
   color: green;
 }
+
+.error {
+  color: red;
+}

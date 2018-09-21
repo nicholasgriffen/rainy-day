@@ -135,8 +135,8 @@ describe('rainy-day', () => {
       it('that resolves to an object containing the login when user is valid', () => user
         .then(res => expect(res.login).to.equal(defaultLogin)))
 
-      it('that throws "User? Not yet." when it fails', () => noUser
-        .catch(e => expect(e.message).to.equal('User? Not yet.')))
+      it('that throws "github user not found" when it fails', () => noUser
+        .catch(e => expect(e.message).to.equal('github user not found')))
     })
 
     describe('#github.client.getRepos takes a github login string', () => {
