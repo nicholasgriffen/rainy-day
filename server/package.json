@@ -1,0 +1,15 @@
+{
+  "name": "rainy-day",
+  "version": "1.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//nicholasgriffen/rainy-day"
+  },
+  "author": "digijan",
+  "license": "ISC"
+}

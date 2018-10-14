@@ -1,4 +1,5 @@
 const { expect } = chai
+// const { defaultLogin, defaultRepo, testRepo } = 
 const defaultLogin = 'nicholasgriffen'
 const defaultRepo = {
   name: 'rainy-day',
