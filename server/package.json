@@ -11,5 +11,14 @@
     "url": "https://github.com//nicholasgriffen/rainy-day"
   },
   "author": "digijan",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
