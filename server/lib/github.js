@@ -1,7 +1,9 @@
 // GITHUB CLIENT //
 // AUTHORIZATION TOKEN LOADED FROM LOCALSTORAGE //
-const github = {
-  client: {
+const apiUrl= process.env.API_URL
+
+module.exports = {
+  client: { 
     options: {
       headers: {
         Accept: `application/vnd.github.v3+json`,
@@ -9,14 +11,13 @@ const github = {
     },
     setupRequest(endpoint, options = github.client.options) {
       
-      const api = `https://api.github.com/`
-      const token = load('auth')
+      const token = process.env.GITHUB_TOKEN || load('auth')
       if (token) {
         options.headers.Authorization = `token ${token}`
       }
       // return a function to delay execution. fetch seemed to execute an extra
       // time during testing when it wasn't wrapped in a function
-      return () => fetch(`${api}${endpoint}`, options)
+      return () => fetch(`${apiUrl}${endpoint}`, options)
         .then((res) => {
           if (!/20*/.test(res.status)) {
             return Promise.reject(new Error(`!20x Status Code: ${res.status}`))
